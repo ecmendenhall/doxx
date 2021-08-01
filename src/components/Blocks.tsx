@@ -6,7 +6,7 @@ const Blocks = () => {
     state: { blocks, activePage },
   } = useApp();
 
-  if (blocks.status === "done" && activePage) {
+  if (activePage) {
     return (
       <div className="text-xl">
         <div className="text-8xl my-4">
@@ -20,7 +20,7 @@ const Blocks = () => {
           </span>
         </h1>
         {Array.from(blocks.blocks).map(([id, block]) => (
-          <div className="rounded-sm hover:bg-gray-100">
+          <div className="my-1 rounded-sm hover:bg-gray-100">
             <Page {...block} />
           </div>
         ))}

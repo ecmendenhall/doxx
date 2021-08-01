@@ -1,43 +1,30 @@
 import CeramicClient from "@ceramicnetwork/http-client";
 import { TileDocument } from "@ceramicnetwork/stream-tile";
 import { IDX } from "@ceramicstudio/idx";
-import { Block, BlockIndex, Page, PageIndex } from "../blocks";
+import { Block, BlockIndex, Page, PageIndex, SavedBlock } from "../blocks";
 import { schemas } from "../config/deployedSchemas.json";
+import ceramic from "./ceramic";
 
-const loadBlocks = async (idx: IDX, ceramic: CeramicClient) => {
+const loadBlocks = async (idx: IDX, ceramicClient: CeramicClient) => {
   const blockIdsResponse = await idx.get<{ blocks: Array<string> }>("blocks");
   const blockIds = blockIdsResponse?.blocks ?? [];
-  const queries = blockIds.map((id) => {
-    return { streamId: id };
-  });
-  const blocksResponse = await ceramic.multiQuery(queries);
+  const blocksResponse = await ceramic.readBlocks(ceramicClient, blockIds);
   let blocks = new Map<string, Block>();
-  for (const key in blocksResponse) {
-    let id = `ceramic://${key}`;
-    blocks.set(id, {
-      id: id,
-      ...blocksResponse[key].state.content,
-    });
-  }
+  blocksResponse.forEach((block) => {
+    blocks.set(block.id, block);
+  });
   console.log(blocks);
   return blocks;
 };
 
-const loadPages = async (idx: IDX, ceramic: CeramicClient) => {
+const loadPages = async (idx: IDX, ceramicClient: CeramicClient) => {
   const pageIdsResponse = await idx.get<{ pages: Array<string> }>("pages");
   const pageIds = pageIdsResponse?.pages ?? [];
-  const queries = pageIds.map((id) => {
-    return { streamId: id };
-  });
-  const pagesResponse = await ceramic.multiQuery(queries);
+  const pagesResponse = await ceramic.readBlocks(ceramicClient, pageIds);
   let pages = new Map<string, Page>();
-  for (const key in pagesResponse) {
-    let id = `ceramic://${key}`;
-    pages.set(id, {
-      id: id,
-      ...pagesResponse[key].state.content,
-    });
-  }
+  pagesResponse.forEach((page) => {
+    pages.set(page.id, page);
+  });
   console.log(pages);
   return pages;
 };
@@ -52,17 +39,21 @@ const createBlock = async (idx: IDX, ceramic: CeramicClient, block: Block) => {
   await idx.set("blocks", {
     blocks: [...blocks, newBlock.id.toUrl()],
   });
-  return [newBlock.id.toString(), newBlock] as const;
+  const savedBlock: SavedBlock = {
+    id: newBlock.id.toUrl(),
+    ...newBlock.state.content,
+  };
+  return savedBlock;
 };
 
 const createPage = async (idx: IDX, ceramic: CeramicClient, page: Page) => {
-  const [_id, newPage] = await createBlock(idx, ceramic, page);
+  const savedPage = await createBlock(idx, ceramic, page);
   const pageIndex = await idx.get<PageIndex>("pages");
   const pages = pageIndex?.pages ?? [];
   await idx.set("pages", {
-    pages: [...pages, newPage.id.toUrl()],
+    pages: [...pages, savedPage.id],
   });
-  return [newPage.id.toString(), newPage] as const;
+  return savedPage;
 };
 
 const loadProfile = async (idx: IDX, caip10Id: string) => {

@@ -6,6 +6,10 @@ import Connections from "../components/Connections";
 import Blocks from "../components/Blocks";
 import Editor from "../components/Editor";
 import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import useApp from "../hooks/useApp";
+import ceramic from "../lib/ceramic";
+import NotFound from "../components/NotFound";
 
 interface Params {
   id: string;
@@ -13,6 +17,28 @@ interface Params {
 
 function Page() {
   let { id } = useParams<Params>();
+  let { state, loadCeramic, setActivePage } = useApp();
+  let [loadingState, setLoadingState] = useState("loading");
+
+  useEffect(() => {
+    loadCeramic();
+  }, [loadCeramic]);
+
+  useEffect(() => {
+    const loadPage = async () => {
+      if (state.ceramic.status === "done") {
+        try {
+          const page = await ceramic.readBlock(state.ceramic.ceramic, id);
+          setActivePage(page);
+          setLoadingState("loaded");
+          console.log(page);
+        } catch (e) {
+          setLoadingState("failed");
+        }
+      }
+    };
+    loadPage();
+  }, [state.ceramic, id, setActivePage]);
 
   return (
     <Grid>
@@ -20,10 +46,13 @@ function Page() {
         <PagesList />
       </Sidebar>
       <Content>
-        <Editor>
-          <p>Page: {id}</p>
-          <Blocks />
-        </Editor>
+        {loadingState === "failed" ? (
+          <NotFound />
+        ) : (
+          <Editor>
+            <Blocks />
+          </Editor>
+        )}
         <Connections />
       </Content>
     </Grid>

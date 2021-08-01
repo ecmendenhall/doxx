@@ -1,7 +1,7 @@
 import CeramicClient from "@ceramicnetwork/http-client";
 import { IDX } from "@ceramicstudio/idx";
 import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
-import { Block, Page } from "../blocks";
+import { Block, Page, SavedBlock } from "../blocks";
 
 type PendingStatus = "pending" | "loading";
 
@@ -109,7 +109,8 @@ export type SetActiveBlock = { type: "set active block"; block: Block };
 export type LoadPages = { type: "pages loading" };
 export type LoadPagesFailed = { type: "pages failed"; error: Error };
 export type SetPages = { type: "pages loaded"; pages: Map<string, Page> };
-export type PagesAction = LoadPages | LoadPagesFailed | SetPages;
+export type NewPage = { type: "new page"; page: SavedBlock };
+export type PagesAction = LoadPages | LoadPagesFailed | SetPages | NewPage;
 
 export type SetActivePage = { type: "set active page"; page: Block };
 
@@ -226,6 +227,12 @@ export const reducer = (state: State, action: Action): State => {
       return {
         ...state,
         activePage: action.page,
+      };
+    case "new page":
+      const newMap = state.pages.pages.set(action.page.id, action.page);
+      return {
+        ...state,
+        pages: { ...state.pages, pages: newMap },
       };
     default:
       return state;

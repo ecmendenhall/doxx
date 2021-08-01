@@ -28,7 +28,7 @@ function ViewProfile() {
       }
     };
     loadProfile();
-  }, []);
+  }, [id]);
 
   return (
     <Grid>

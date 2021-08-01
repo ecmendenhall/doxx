@@ -9,20 +9,22 @@ import Blocks from "../components/Blocks";
 import Editor from "../components/Editor";
 import useApp from "../hooks/useApp";
 import { useEffect } from "react";
+import Menu from "../components/Menu";
+import CopyLink from "../components/CopyLink";
 
 function Home() {
   const { state, loadCeramic, loadPages, loadBlocks } = useApp();
 
   useEffect(() => {
     loadCeramic();
-  }, []);
+  }, [loadCeramic]);
 
   useEffect(() => {
     if (state.idx.status === "done" && state.ceramic.status === "done") {
       loadPages(state.idx.idx, state.ceramic.ceramic);
       loadBlocks(state.idx.idx, state.ceramic.ceramic);
     }
-  }, [state.ceramic, loadBlocks]);
+  }, [state.ceramic, state.idx, loadPages, loadBlocks]);
 
   return (
     <Grid>
@@ -31,7 +33,10 @@ function Home() {
         <CreatePage />
       </Sidebar>
       <Content>
-        <ConnectWallet />
+        <Menu>
+          <CopyLink />
+          <ConnectWallet />
+        </Menu>
         <Editor>
           <Blocks />
         </Editor>

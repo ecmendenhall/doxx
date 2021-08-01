@@ -11,6 +11,7 @@ import * as IDXTools from "@ceramicstudio/idx-tools";
 import { TileDocument } from "@ceramicnetwork/stream-tile";
 import { Schema } from "../schemas";
 import { definitions } from "../config/deployedSchemas.json";
+import { SavedBlock } from "../blocks";
 
 const API_URL = "https://ceramic-clay.3boxlabs.com";
 const ceramic = new CeramicClient(API_URL);
@@ -72,6 +73,36 @@ const publishDefinition = async (
   });
 };
 
+const readBlock = async (
+  ceramic: CeramicClient,
+  blockId: string
+): Promise<SavedBlock> => {
+  const blockResponse = await ceramic.loadStream(blockId);
+  return {
+    id: blockId,
+    ...blockResponse.state.content,
+  };
+};
+
+const readBlocks = async (
+  ceramic: CeramicClient,
+  blockIds: string[]
+): Promise<SavedBlock[]> => {
+  const queries = blockIds.map((id) => {
+    return { streamId: id };
+  });
+  const blocksResponse = await ceramic.multiQuery(queries);
+  let blocks = [];
+  for (const key in blocksResponse) {
+    let id = `ceramic://${key}`;
+    blocks.push({
+      id: id,
+      ...blocksResponse[key].state.content,
+    });
+  }
+  return blocks;
+};
+
 const exp = {
   loadClient,
   authenticateUser,
@@ -79,6 +110,8 @@ const exp = {
   publishSchema,
   publishDefinition,
   getReadOnlyIDX,
+  readBlocks,
+  readBlock,
 };
 
 export default exp;

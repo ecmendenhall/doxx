@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import useApp from "../hooks/useApp";
 
 const formatAddress = function (address: string) {
@@ -68,11 +67,7 @@ const ConnectButton = () => {
 };
 
 const ConnectWallet = () => {
-  return (
-    <div className="fixed top-8 right-10 space-x-2">
-      <ConnectButton />
-    </div>
-  );
+  return <ConnectButton />;
 };
 
 export default ConnectWallet;

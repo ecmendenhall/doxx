@@ -22,4 +22,5 @@ export interface PageIndex {
   pages: string[];
 }
 
+export type SavedBlock = SavedPage;
 export type Block = Page;

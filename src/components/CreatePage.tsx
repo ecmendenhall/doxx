@@ -3,10 +3,10 @@ import { IDX } from "@ceramicstudio/idx";
 import useApp from "../hooks/useApp";
 import idx from "../lib/idx";
 
-const createFakePage = (idxClient: IDX, ceramic: CeramicClient) => {
+const createFakePage = async (idxClient: IDX, ceramic: CeramicClient) => {
   const adjectives = ["Cool", "Sweet", "Rad"];
   const emoji = ["🎉", "🌈", "✨"];
-  idx.createPage(idxClient, ceramic, {
+  return await idx.createPage(idxClient, ceramic, {
     type: "page",
     properties: {
       title: [
@@ -28,13 +28,18 @@ const createFakePage = (idxClient: IDX, ceramic: CeramicClient) => {
 const CreatePage = () => {
   const {
     state: { idx, ceramic },
+    newPage,
+    setActivePage,
   } = useApp();
 
   return (
     <button
-      onClick={() => {
+      onClick={async () => {
         if (idx.status === "done" && ceramic.status === "done") {
-          createFakePage(idx.idx, ceramic.ceramic);
+          const page = await createFakePage(idx.idx, ceramic.ceramic);
+          console.log(page);
+          newPage(page);
+          setActivePage(page);
         }
       }}
       className="absolute bottom-0 left-0 w-full p-2 text-left hover:bg-purple-300 border-purple-200 border-t-2"
