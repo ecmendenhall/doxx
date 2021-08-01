@@ -48,9 +48,7 @@ const Connections = () => {
           }}
         >
           <span
-            className={`fill-current text-${statusColor(
-              state.ceramic.auth.status
-            )}`}
+            className={`fill-current text-${statusColor(state.idx.status)}`}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

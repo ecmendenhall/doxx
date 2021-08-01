@@ -19,24 +19,20 @@ type ProviderState =
   | ProviderFailedState
   | ProviderLoadedState;
 
-type CeramicAuthPendingState = { status: PendingStatus };
-type CeramicAuthFailedState = { status: "failed"; error: Error };
-type CeramicAuthDoneState = { status: "done"; idx: IDX };
+type IDXPendingState = { status: PendingStatus };
+type IDXFailedState = { status: "failed"; error: Error };
+type IDXDoneState = { status: "done"; idx: IDX };
 
-type CeramicAuthState =
-  | CeramicAuthPendingState
-  | CeramicAuthFailedState
-  | CeramicAuthDoneState;
-type CeramicPendingState = { status: PendingStatus; auth: CeramicAuthState };
+type IDXState = IDXPendingState | IDXFailedState | IDXDoneState;
+
+type CeramicPendingState = { status: PendingStatus };
 type CeramicFailedState = {
   status: "failed";
   error: Error;
-  auth: CeramicAuthState;
 };
 export type CeramicLoadedState = {
   status: "done";
   ceramic: CeramicClient;
-  auth: CeramicAuthState;
 };
 export type CeramicState =
   | CeramicPendingState
@@ -66,6 +62,7 @@ type ActivePageState = Block | null;
 export interface State {
   provider: ProviderState;
   ceramic: CeramicState;
+  idx: IDXState;
   pages: PagesState;
   blocks: BlocksState;
   activeBlock: ActiveBlockState;
@@ -88,19 +85,19 @@ export type LoadCeramicFailed = { type: "ceramic failed"; error: Error };
 export type SetCeramic = { type: "ceramic loaded"; ceramic: CeramicClient };
 export type CeramicAction = LoadCeramic | LoadCeramicFailed | SetCeramic;
 
-export type AuthenticateCeramic = { type: "ceramic authenticating" };
-export type AuthenticateCeramicFailed = {
-  type: "ceramic auth failed";
+export type AuthenticateIDX = { type: "idx authenticating" };
+export type AuthenticateIDXFailed = {
+  type: "idx auth failed";
   error: Error;
 };
-export type CeramicAuthenticated = {
-  type: "ceramic authenticated";
+export type IDXAuthenticated = {
+  type: "idx authenticated";
   idx: IDX;
 };
-export type CeramicAuthAction =
-  | AuthenticateCeramic
-  | AuthenticateCeramicFailed
-  | CeramicAuthenticated;
+export type IDXAuthAction =
+  | AuthenticateIDX
+  | AuthenticateIDXFailed
+  | IDXAuthenticated;
 
 export type LoadBlocks = { type: "blocks loading" };
 export type LoadBlocksFailed = { type: "blocks failed"; error: Error };
@@ -119,7 +116,7 @@ export type SetActivePage = { type: "set active page"; page: Block };
 export type Action =
   | ProviderAction
   | CeramicAction
-  | CeramicAuthAction
+  | IDXAuthAction
   | BlocksAction
   | PagesAction
   | SetActiveBlock
@@ -151,7 +148,7 @@ export const reducer = (state: State, action: Action): State => {
     case "ceramic loading":
       return {
         ...state,
-        ceramic: { status: "loading", auth: { status: "pending" } },
+        ceramic: { status: "loading" },
       };
     case "ceramic loaded":
       return {
@@ -159,7 +156,6 @@ export const reducer = (state: State, action: Action): State => {
         ceramic: {
           status: "done",
           ceramic: action.ceramic,
-          auth: { status: "pending" },
         },
       };
     case "ceramic failed":
@@ -168,28 +164,27 @@ export const reducer = (state: State, action: Action): State => {
         ceramic: {
           status: "failed",
           error: action.error,
-          auth: { status: "pending" },
         },
       };
-    case "ceramic authenticating":
+    case "idx authenticating":
       return {
         ...state,
-        ceramic: { ...state.ceramic, auth: { status: "loading" } },
+        idx: { status: "loading" },
       };
-    case "ceramic authenticated":
+    case "idx authenticated":
       return {
         ...state,
-        ceramic: {
-          ...state.ceramic,
-          auth: { status: "done", idx: action.idx },
+        idx: {
+          status: "done",
+          idx: action.idx,
         },
       };
-    case "ceramic auth failed":
+    case "idx auth failed":
       return {
         ...state,
-        ceramic: {
-          ...state.ceramic,
-          auth: { status: "failed", error: action.error },
+        idx: {
+          status: "failed",
+          error: action.error,
         },
       };
     case "blocks loading":
@@ -239,7 +234,8 @@ export const reducer = (state: State, action: Action): State => {
 
 export const initialState: State = {
   provider: { status: "pending" },
-  ceramic: { status: "pending", auth: { status: "pending" } },
+  ceramic: { status: "pending" },
+  idx: { status: "pending" },
   pages: { status: "pending", pages: new Map<string, Page>() },
   blocks: { status: "pending", blocks: new Map<string, Block>() },
   activeBlock: null,

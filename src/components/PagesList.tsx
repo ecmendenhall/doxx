@@ -1,6 +1,6 @@
 import useApp from "../hooks/useApp";
 
-const Pages = () => {
+const PagesList = () => {
   const {
     state: {
       pages: { status, pages },
@@ -27,4 +27,4 @@ const Pages = () => {
   );
 };
 
-export default Pages;
+export default PagesList;

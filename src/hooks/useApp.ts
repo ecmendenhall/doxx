@@ -6,7 +6,6 @@ import { Web3Provider } from "@ethersproject/providers";
 import { IDX } from "@ceramicstudio/idx";
 import idx from "../lib/idx";
 import CeramicClient from "@ceramicnetwork/http-client";
-import Pages from "../components/Pages";
 import { Block } from "../blocks";
 
 function useApp() {
@@ -58,11 +57,11 @@ function useApp() {
   const loadIDX = useCallback(
     async (provider: Web3Provider) => {
       try {
-        dispatch({ type: "ceramic authenticating" });
+        dispatch({ type: "idx authenticating" });
         const client = await ceramic.authenticateUser(provider);
-        dispatch({ type: "ceramic authenticated", idx: client });
+        dispatch({ type: "idx authenticated", idx: client });
       } catch (err) {
-        dispatch({ type: "ceramic auth failed", error: err });
+        dispatch({ type: "idx auth failed", error: err });
       }
     },
     [dispatch]

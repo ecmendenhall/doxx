@@ -1,6 +1,6 @@
 import Content from "../components/Content";
 import Grid from "../components/Grid";
-import Pages from "../components/Pages";
+import PagesList from "../components/PagesList";
 import Sidebar from "../components/Sidebar";
 import Connections from "../components/Connections";
 import Blocks from "../components/Blocks";
@@ -33,7 +33,7 @@ function ViewProfile() {
   return (
     <Grid>
       <Sidebar>
-        <Pages />
+        <PagesList />
       </Sidebar>
       <Content>
         <Editor>

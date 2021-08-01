@@ -25,16 +25,16 @@ const createFakePage = (idxClient: IDX, ceramic: CeramicClient) => {
   });
 };
 
-const NewPage = () => {
+const CreatePage = () => {
   const {
-    state: { ceramic },
+    state: { idx, ceramic },
   } = useApp();
 
   return (
     <button
       onClick={() => {
-        if (ceramic.auth.status === "done" && ceramic.status === "done") {
-          createFakePage(ceramic.auth.idx, ceramic.ceramic);
+        if (idx.status === "done" && ceramic.status === "done") {
+          createFakePage(idx.idx, ceramic.ceramic);
         }
       }}
       className="absolute bottom-0 left-0 w-full p-2 text-left hover:bg-purple-300 border-purple-200 border-t-2"
@@ -44,4 +44,4 @@ const NewPage = () => {
   );
 };
 
-export default NewPage;
+export default CreatePage;
