@@ -47,11 +47,13 @@ type BlocksPendingState = { status: PendingStatus };
 type BlocksFailedState = { status: "failed"; error: Error };
 type BlocksLoadedState = { status: "done"; blocks: Block[] };
 type BlocksState = BlocksPendingState | BlocksFailedState | BlocksLoadedState;
+type ActiveBlockState = Block | null;
 
 export interface State {
   provider: ProviderState;
   ceramic: CeramicState;
   blocks: BlocksState;
+  activeBlock: ActiveBlockState;
 }
 
 export type LoadProvider = { type: "provider loading" };
@@ -89,11 +91,14 @@ export type LoadBlocksFailed = { type: "blocks failed"; error: Error };
 export type SetBlocks = { type: "blocks loaded"; blocks: Block[] };
 export type BlocksAction = LoadBlocks | LoadBlocksFailed | SetBlocks;
 
+export type SetActiveBlock = { type: "set active block"; block: Block };
+
 export type Action =
   | ProviderAction
   | CeramicAction
   | CeramicAuthAction
-  | BlocksAction;
+  | BlocksAction
+  | SetActiveBlock;
 
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -177,6 +182,12 @@ export const reducer = (state: State, action: Action): State => {
         ...state,
         blocks: { status: "failed", error: action.error },
       };
+    case "set active block":
+      return {
+        ...state,
+        activeBlock: action.block,
+      };
+
     default:
       return state;
   }
@@ -186,4 +197,5 @@ export const initialState: State = {
   provider: { status: "pending" },
   ceramic: { status: "pending", auth: { status: "pending" } },
   blocks: { status: "pending" },
+  activeBlock: null,
 };

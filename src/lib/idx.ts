@@ -35,9 +35,14 @@ const createBlock = async (idx: IDX, ceramic: CeramicClient, block: Block) => {
   return newBlock.id.toString();
 };
 
+const loadProfile = async (idx: IDX, caip10Id: string) => {
+  return await idx.get("basicProfile", caip10Id);
+};
+
 const exp = {
   loadBlocks,
   createBlock,
+  loadProfile,
 };
 
 export default exp;

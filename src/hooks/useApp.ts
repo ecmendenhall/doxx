@@ -63,12 +63,20 @@ function useApp() {
     }
   }, [dispatch]);
 
+  const setActiveBlock = useCallback(
+    (block) => {
+      dispatch({ type: "set active block", block: block });
+    },
+    [dispatch]
+  );
+
   return {
     state,
     loadProvider,
     loadCeramic,
     loadIDX,
     loadBlocks,
+    setActiveBlock,
   };
 }
 

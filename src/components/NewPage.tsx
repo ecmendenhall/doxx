@@ -39,7 +39,7 @@ const NewPage = () => {
       }}
       className="absolute bottom-0 left-0 w-full p-2 text-left hover:bg-purple-300 border-purple-200 border-t-2"
     >
-      + New page
+      <span className="text-xl">+</span> New page
     </button>
   );
 };
