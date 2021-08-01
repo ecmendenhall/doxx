@@ -1,7 +1,7 @@
 import CeramicClient from "@ceramicnetwork/http-client";
 import { IDX } from "@ceramicstudio/idx";
 import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
-import { Block } from "../blocks";
+import { Block, Page } from "../blocks";
 
 type PendingStatus = "pending" | "loading";
 
@@ -43,17 +43,33 @@ export type CeramicState =
   | CeramicFailedState
   | CeramicLoadedState;
 
-type BlocksPendingState = { status: PendingStatus };
-type BlocksFailedState = { status: "failed"; error: Error };
-type BlocksLoadedState = { status: "done"; blocks: Block[] };
+type BlocksPendingState = { status: PendingStatus; blocks: Map<string, Block> };
+type BlocksFailedState = {
+  status: "failed";
+  error: Error;
+  blocks: Map<string, Block>;
+};
+type BlocksLoadedState = { status: "done"; blocks: Map<string, Block> };
 type BlocksState = BlocksPendingState | BlocksFailedState | BlocksLoadedState;
 type ActiveBlockState = Block | null;
+
+type PagesPendingState = { status: PendingStatus; pages: Map<string, Page> };
+type PagesFailedState = {
+  status: "failed";
+  error: Error;
+  pages: Map<string, Page>;
+};
+type PagesLoadedState = { status: "done"; pages: Map<string, Page> };
+type PagesState = PagesPendingState | PagesFailedState | PagesLoadedState;
+type ActivePageState = Block | null;
 
 export interface State {
   provider: ProviderState;
   ceramic: CeramicState;
+  pages: PagesState;
   blocks: BlocksState;
   activeBlock: ActiveBlockState;
+  activePage: ActivePageState;
 }
 
 export type LoadProvider = { type: "provider loading" };
@@ -88,17 +104,26 @@ export type CeramicAuthAction =
 
 export type LoadBlocks = { type: "blocks loading" };
 export type LoadBlocksFailed = { type: "blocks failed"; error: Error };
-export type SetBlocks = { type: "blocks loaded"; blocks: Block[] };
+export type SetBlocks = { type: "blocks loaded"; blocks: Map<string, Block> };
 export type BlocksAction = LoadBlocks | LoadBlocksFailed | SetBlocks;
 
 export type SetActiveBlock = { type: "set active block"; block: Block };
+
+export type LoadPages = { type: "pages loading" };
+export type LoadPagesFailed = { type: "pages failed"; error: Error };
+export type SetPages = { type: "pages loaded"; pages: Map<string, Page> };
+export type PagesAction = LoadPages | LoadPagesFailed | SetPages;
+
+export type SetActivePage = { type: "set active page"; page: Block };
 
 export type Action =
   | ProviderAction
   | CeramicAction
   | CeramicAuthAction
   | BlocksAction
-  | SetActiveBlock;
+  | PagesAction
+  | SetActiveBlock
+  | SetActivePage;
 
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -170,7 +195,7 @@ export const reducer = (state: State, action: Action): State => {
     case "blocks loading":
       return {
         ...state,
-        blocks: { status: "loading" },
+        blocks: { ...state.blocks, status: "loading" },
       };
     case "blocks loaded":
       return {
@@ -180,14 +205,33 @@ export const reducer = (state: State, action: Action): State => {
     case "blocks failed":
       return {
         ...state,
-        blocks: { status: "failed", error: action.error },
+        blocks: { ...state.blocks, status: "failed", error: action.error },
+      };
+    case "pages loading":
+      return {
+        ...state,
+        pages: { ...state.pages, status: "loading" },
+      };
+    case "pages loaded":
+      return {
+        ...state,
+        pages: { status: "done", pages: action.pages },
+      };
+    case "pages failed":
+      return {
+        ...state,
+        pages: { ...state.pages, status: "failed", error: action.error },
       };
     case "set active block":
       return {
         ...state,
         activeBlock: action.block,
       };
-
+    case "set active page":
+      return {
+        ...state,
+        activePage: action.page,
+      };
     default:
       return state;
   }
@@ -196,6 +240,8 @@ export const reducer = (state: State, action: Action): State => {
 export const initialState: State = {
   provider: { status: "pending" },
   ceramic: { status: "pending", auth: { status: "pending" } },
-  blocks: { status: "pending" },
+  pages: { status: "pending", pages: new Map<string, Page>() },
+  blocks: { status: "pending", blocks: new Map<string, Block>() },
   activeBlock: null,
+  activePage: null,
 };

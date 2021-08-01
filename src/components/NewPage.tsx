@@ -6,7 +6,7 @@ import idx from "../lib/idx";
 const createFakePage = (idxClient: IDX, ceramic: CeramicClient) => {
   const adjectives = ["Cool", "Sweet", "Rad"];
   const emoji = ["🎉", "🌈", "✨"];
-  idx.createBlock(idxClient, ceramic, {
+  idx.createPage(idxClient, ceramic, {
     type: "page",
     properties: {
       title: [

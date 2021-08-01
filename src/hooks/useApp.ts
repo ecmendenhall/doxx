@@ -6,6 +6,8 @@ import { Web3Provider } from "@ethersproject/providers";
 import { IDX } from "@ceramicstudio/idx";
 import idx from "../lib/idx";
 import CeramicClient from "@ceramicnetwork/http-client";
+import Pages from "../components/Pages";
+import { Block } from "../blocks";
 
 function useApp() {
   const { state, dispatch } = useContext(AppContext);
@@ -26,6 +28,19 @@ function useApp() {
       dispatch({ type: "provider failed", error: err });
     }
   }, [dispatch]);
+
+  const loadPages = useCallback(
+    async (idxClient: IDX, ceramic: CeramicClient) => {
+      try {
+        dispatch({ type: "pages loading" });
+        const pages = await idx.loadPages(idxClient, ceramic);
+        dispatch({ type: "pages loaded", pages: pages });
+      } catch (err) {
+        dispatch({ type: "pages failed", error: err });
+      }
+    },
+    [dispatch]
+  );
 
   const loadBlocks = useCallback(
     async (idxClient: IDX, ceramic: CeramicClient) => {
@@ -64,8 +79,15 @@ function useApp() {
   }, [dispatch]);
 
   const setActiveBlock = useCallback(
-    (block) => {
+    (block: Block) => {
       dispatch({ type: "set active block", block: block });
+    },
+    [dispatch]
+  );
+
+  const setActivePage = useCallback(
+    (page: Block) => {
+      dispatch({ type: "set active page", page: page });
     },
     [dispatch]
   );
@@ -75,8 +97,10 @@ function useApp() {
     loadProvider,
     loadCeramic,
     loadIDX,
+    loadPages,
     loadBlocks,
     setActiveBlock,
+    setActivePage,
   };
 }
 

@@ -1,7 +1,7 @@
 import CeramicClient from "@ceramicnetwork/http-client";
 import { TileDocument } from "@ceramicnetwork/stream-tile";
 import { IDX } from "@ceramicstudio/idx";
-import { Block, BlockIndex } from "../blocks";
+import { Block, BlockIndex, Page, PageIndex } from "../blocks";
 import { schemas } from "../config/deployedSchemas.json";
 
 const loadBlocks = async (idx: IDX, ceramic: CeramicClient) => {
@@ -11,15 +11,35 @@ const loadBlocks = async (idx: IDX, ceramic: CeramicClient) => {
     return { streamId: id };
   });
   const blocksResponse = await ceramic.multiQuery(queries);
-  let blocks = [];
+  let blocks = new Map<string, Block>();
   for (const key in blocksResponse) {
-    blocks.push({
-      id: `ceramic://${key}`,
+    let id = `ceramic://${key}`;
+    blocks.set(id, {
+      id: id,
       ...blocksResponse[key].state.content,
     });
   }
   console.log(blocks);
   return blocks;
+};
+
+const loadPages = async (idx: IDX, ceramic: CeramicClient) => {
+  const pageIdsResponse = await idx.get<{ pages: Array<string> }>("pages");
+  const pageIds = pageIdsResponse?.pages ?? [];
+  const queries = pageIds.map((id) => {
+    return { streamId: id };
+  });
+  const pagesResponse = await ceramic.multiQuery(queries);
+  let pages = new Map<string, Page>();
+  for (const key in pagesResponse) {
+    let id = `ceramic://${key}`;
+    pages.set(id, {
+      id: id,
+      ...pagesResponse[key].state.content,
+    });
+  }
+  console.log(pages);
+  return pages;
 };
 
 const createBlock = async (idx: IDX, ceramic: CeramicClient, block: Block) => {
@@ -32,7 +52,17 @@ const createBlock = async (idx: IDX, ceramic: CeramicClient, block: Block) => {
   await idx.set("blocks", {
     blocks: [...blocks, newBlock.id.toUrl()],
   });
-  return newBlock.id.toString();
+  return [newBlock.id.toString(), newBlock] as const;
+};
+
+const createPage = async (idx: IDX, ceramic: CeramicClient, page: Page) => {
+  const [_id, newPage] = await createBlock(idx, ceramic, page);
+  const pageIndex = await idx.get<PageIndex>("pages");
+  const pages = pageIndex?.pages ?? [];
+  await idx.set("pages", {
+    pages: [...pages, newPage.id.toUrl()],
+  });
+  return [newPage.id.toString(), newPage] as const;
 };
 
 const loadProfile = async (idx: IDX, caip10Id: string) => {
@@ -40,7 +70,9 @@ const loadProfile = async (idx: IDX, caip10Id: string) => {
 };
 
 const exp = {
+  loadPages,
   loadBlocks,
+  createPage,
   createBlock,
   loadProfile,
 };

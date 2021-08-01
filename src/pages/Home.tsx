@@ -7,8 +7,22 @@ import Sidebar from "../components/Sidebar";
 import Connections from "../components/Connections";
 import Blocks from "../components/Blocks";
 import Editor from "../components/Editor";
+import useApp from "../hooks/useApp";
+import { useEffect } from "react";
 
 function Home() {
+  const { state, loadPages, loadBlocks } = useApp();
+
+  useEffect(() => {
+    if (
+      state.ceramic.auth.status === "done" &&
+      state.ceramic.status === "done"
+    ) {
+      loadPages(state.ceramic.auth.idx, state.ceramic.ceramic);
+      loadBlocks(state.ceramic.auth.idx, state.ceramic.ceramic);
+    }
+  }, [state.ceramic, loadBlocks]);
+
   return (
     <Grid>
       <Sidebar>

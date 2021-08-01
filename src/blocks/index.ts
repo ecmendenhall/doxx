@@ -1,4 +1,4 @@
-type Page = NewPage | SavedPage;
+export type Page = NewPage | SavedPage;
 
 interface NewPage {
   type: "page";
@@ -16,6 +16,10 @@ type SavedPage = NewPage & { id: string };
 
 export interface BlockIndex {
   blocks: string[];
+}
+
+export interface PageIndex {
+  pages: string[];
 }
 
 export type Block = Page;

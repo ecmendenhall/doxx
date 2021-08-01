@@ -6,16 +6,7 @@ const formatAddress = function (address: string) {
 };
 
 const Connected = () => {
-  const { state, loadBlocks } = useApp();
-
-  useEffect(() => {
-    if (
-      state.ceramic.auth.status === "done" &&
-      state.ceramic.status === "done"
-    ) {
-      loadBlocks(state.ceramic.auth.idx, state.ceramic.ceramic);
-    }
-  }, [state.ceramic, loadBlocks]);
+  const { state } = useApp();
 
   if (state.provider.status === "done") {
     const { ensName, address } = state.provider;
