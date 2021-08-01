@@ -17,7 +17,7 @@ const Pages = () => {
                   onClick={() => setActiveBlock(b)}
                   className="hover:bg-purple-300 py-1 px-4 cursor-pointer"
                 >
-                  <span className="text-l">{b.format.page_icon}</span>{" "}
+                  <span className="text-l mx-1">{b.format.page_icon}</span>{" "}
                   {b.properties.title}
                 </li>
               );

@@ -21,7 +21,7 @@ function Page() {
       </Sidebar>
       <Content>
         <Editor>
-          <p>{id}</p>
+          <p>Page: {id}</p>
           <Blocks />
         </Editor>
         <Connections />

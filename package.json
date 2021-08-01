@@ -12,6 +12,8 @@
     "@ceramicstudio/idx-tools": "^0.11.0",
     "@craco/craco": "^6.2.0",
     "@ethersproject/providers": "^5.4.3",
+    "@fontsource/contrail-one": "^4.5.0",
+    "@fontsource/fredoka-one": "^4.5.0",
     "@heroicons/react": "^1.0.3",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",

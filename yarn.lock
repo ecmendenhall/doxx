@@ -1776,6 +1776,16 @@
     "@ethersproject/properties" "^5.4.0"
     "@ethersproject/strings" "^5.4.0"
 
+"@fontsource/contrail-one@^4.5.0":
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/@fontsource/contrail-one/-/contrail-one-4.5.0.tgz#b4bd8d7497fe28d23d59146035c8e465ea64073d"
+  integrity sha512-4GgXYdyXPoOaz97q0H8UNDfSif830Xz3C5U7TK7pka+9Y/S8ZV/0dIPAu148/vvJoULTVXzsvD2awZIxnqeLHg==
+
+"@fontsource/fredoka-one@^4.5.0":
+  version "4.5.0"
+  resolved "https://registry.yarnpkg.com/@fontsource/fredoka-one/-/fredoka-one-4.5.0.tgz#a90c734850f7e818c29552ce62728ec39ba98797"
+  integrity sha512-/KhzS7GfsC8kkq1bcAMhq/ZuikfYZ+bFAXROl+hKGZC/dpBrh7oM5y4w8Ih6/09imyfkVHvIzw+t8vaFFgxaQA==
+
 "@hapi/address@2.x.x":
   version "2.1.4"
   resolved "https://registry.yarnpkg.com/@hapi/address/-/address-2.1.4.tgz#5d67ed43f3fd41a69d4b9ff7b56e7c0d1d0a81e5"

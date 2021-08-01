@@ -3,6 +3,9 @@ module.exports = {
   darkMode: false,
   theme: {
     extend: {},
+    fontFamily: {
+      script: ['Contrail One']
+    }
   },
   variants: {
     extend: {},

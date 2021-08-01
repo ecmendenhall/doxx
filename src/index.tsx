@@ -1,5 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import "@fontsource/fredoka-one";
+import "@fontsource/contrail-one";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
