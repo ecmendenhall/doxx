@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { SavedBlock } from "../blocks";
+import { Page } from "../blocks";
 import useApp from "../hooks/useApp";
 
 const CopyLink = () => {
   const {
     state: { activePage },
   } = useApp();
-  const copy = async (page: SavedBlock) => {
+  const [copyStatus, setCopyStatus] = useState("pending");
+
+  const copy = async (page: Page) => {
     const path = page.id.split("://")[1];
     const url = `http://localhost:3000/pages/${path}`;
     await navigator.clipboard.writeText(url);
@@ -15,13 +17,12 @@ const CopyLink = () => {
       setCopyStatus("pending");
     }, 1800);
   };
-  const [copyStatus, setCopyStatus] = useState("pending");
 
   return (
     <span>
       {activePage && (
         <button
-          onClick={() => copy(activePage as SavedBlock)}
+          onClick={() => copy(activePage)}
           className="bg-gray-100 hover:bg-gray-300 py-1 px-2 rounded-lg shadow-md"
         >
           <svg

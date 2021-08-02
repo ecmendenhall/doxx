@@ -1,6 +1,9 @@
-export type Page = NewPage | SavedPage;
+import { useRef, useEffect, useCallback } from "react";
 
-interface NewPage {
+export type SaveState = "new" | "changed" | "saving" | "saved";
+
+export interface Page {
+  id: string;
   type: "page";
   properties: {
     title: string[][];
@@ -10,9 +13,8 @@ interface NewPage {
     page_icon: string;
   };
   parent: string;
+  saveState: SaveState;
 }
-
-type SavedPage = NewPage & { id: string };
 
 export interface BlockIndex {
   blocks: string[];
@@ -22,5 +24,21 @@ export interface PageIndex {
   pages: string[];
 }
 
-export type SavedBlock = SavedPage;
 export type Block = Page;
+
+export const useRefCallback = <T extends any[]>(
+  value: ((...args: T) => void) | undefined,
+  deps?: React.DependencyList
+): ((...args: T) => void) => {
+  const ref = useRef(value);
+
+  useEffect(() => {
+    ref.current = value;
+  }, deps ?? [value]);
+
+  const result = useCallback((...args: T) => {
+    ref.current?.(...args);
+  }, []);
+
+  return result;
+};

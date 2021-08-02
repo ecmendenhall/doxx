@@ -1,7 +1,7 @@
 import CeramicClient from "@ceramicnetwork/http-client";
 import { IDX } from "@ceramicstudio/idx";
 import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
-import { Block, Page, SavedBlock } from "../blocks";
+import { Block, Page } from "../blocks";
 
 type PendingStatus = "pending" | "loading";
 
@@ -39,7 +39,10 @@ export type CeramicState =
   | CeramicFailedState
   | CeramicLoadedState;
 
-type BlocksPendingState = { status: PendingStatus; blocks: Map<string, Block> };
+type BlocksPendingState = {
+  status: PendingStatus;
+  blocks: Map<string, Block>;
+};
 type BlocksFailedState = {
   status: "failed";
   error: Error;
@@ -49,7 +52,10 @@ type BlocksLoadedState = { status: "done"; blocks: Map<string, Block> };
 type BlocksState = BlocksPendingState | BlocksFailedState | BlocksLoadedState;
 type ActiveBlockState = Block | null;
 
-type PagesPendingState = { status: PendingStatus; pages: Map<string, Page> };
+type PagesPendingState = {
+  status: PendingStatus;
+  pages: Map<string, Page>;
+};
 type PagesFailedState = {
   status: "failed";
   error: Error;
@@ -101,7 +107,10 @@ export type IDXAuthAction =
 
 export type LoadBlocks = { type: "blocks loading" };
 export type LoadBlocksFailed = { type: "blocks failed"; error: Error };
-export type SetBlocks = { type: "blocks loaded"; blocks: Map<string, Block> };
+export type SetBlocks = {
+  type: "blocks loaded";
+  blocks: Map<string, Block>;
+};
 export type BlocksAction = LoadBlocks | LoadBlocksFailed | SetBlocks;
 
 export type SetActiveBlock = { type: "set active block"; block: Block };
@@ -109,10 +118,22 @@ export type SetActiveBlock = { type: "set active block"; block: Block };
 export type LoadPages = { type: "pages loading" };
 export type LoadPagesFailed = { type: "pages failed"; error: Error };
 export type SetPages = { type: "pages loaded"; pages: Map<string, Page> };
-export type NewPage = { type: "new page"; page: SavedBlock };
-export type PagesAction = LoadPages | LoadPagesFailed | SetPages | NewPage;
+export type NewPage = { type: "new page"; page: Page };
+export type SavePage = { type: "save page"; page: Page };
+export type SavePageComplete = {
+  type: "save page complete";
+  page: Page;
+  savedPage: Page;
+};
+export type PagesAction =
+  | LoadPages
+  | LoadPagesFailed
+  | SetPages
+  | NewPage
+  | SavePage
+  | SavePageComplete;
 
-export type SetActivePage = { type: "set active page"; page: Block };
+export type SetActivePage = { type: "set active page"; page: Page };
 
 export type Action =
   | ProviderAction
@@ -229,10 +250,34 @@ export const reducer = (state: State, action: Action): State => {
         activePage: action.page,
       };
     case "new page":
-      const newMap = state.pages.pages.set(action.page.id, action.page);
       return {
         ...state,
-        pages: { ...state.pages, pages: newMap },
+        pages: {
+          ...state.pages,
+          pages: state.pages.pages.set(action.page.id, action.page),
+        },
+      };
+    case "save page":
+      return {
+        ...state,
+        pages: {
+          ...state.pages,
+          pages: state.pages.pages.set(action.page.id, {
+            ...action.page,
+            saveState: "saving",
+          }),
+        },
+      };
+    case "save page complete":
+      return {
+        ...state,
+        pages: {
+          ...state.pages,
+          pages: state.pages.pages.set(action.page.id, {
+            ...action.savedPage,
+            saveState: "saved",
+          }),
+        },
       };
     default:
       return state;

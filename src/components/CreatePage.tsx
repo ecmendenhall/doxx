@@ -1,34 +1,31 @@
 import CeramicClient from "@ceramicnetwork/http-client";
 import { IDX } from "@ceramicstudio/idx";
+import { Page } from "../blocks";
 import useApp from "../hooks/useApp";
 import idx from "../lib/idx";
+import { v4 as uuid } from "uuid";
 
-const createFakePage = async (idxClient: IDX, ceramic: CeramicClient) => {
-  const adjectives = ["Cool", "Sweet", "Rad"];
-  const emoji = ["🎉", "🌈", "✨"];
-  return await idx.createPage(idxClient, ceramic, {
+const createEmptyPage = (): Page => {
+  return {
+    id: uuid(),
+    saveState: "new",
     type: "page",
     properties: {
-      title: [
-        [
-          `My ${
-            adjectives[Math.floor(Math.random() * adjectives.length)]
-          } Page`,
-        ],
-      ],
+      title: [["New Page"]],
     },
     content: [],
     format: {
-      page_icon: emoji[Math.floor(Math.random() * emoji.length)],
+      page_icon: "📑",
     },
     parent: "",
-  });
+  };
 };
 
 const CreatePage = () => {
   const {
     state: { idx, ceramic },
     newPage,
+    saveNewPage,
     setActivePage,
   } = useApp();
 
@@ -36,10 +33,10 @@ const CreatePage = () => {
     <button
       onClick={async () => {
         if (idx.status === "done" && ceramic.status === "done") {
-          const page = await createFakePage(idx.idx, ceramic.ceramic);
-          console.log(page);
+          const page = createEmptyPage();
           newPage(page);
           setActivePage(page);
+          saveNewPage(idx.idx, ceramic.ceramic, page);
         }
       }}
       className="absolute bottom-0 left-0 w-full p-2 text-left hover:bg-purple-300 border-purple-200 border-t-2"

@@ -6,7 +6,7 @@ import { Web3Provider } from "@ethersproject/providers";
 import { IDX } from "@ceramicstudio/idx";
 import idx from "../lib/idx";
 import CeramicClient from "@ceramicnetwork/http-client";
-import { Block, SavedBlock } from "../blocks";
+import { Block, Page } from "../blocks";
 
 function useApp() {
   const { state, dispatch } = useContext(AppContext);
@@ -84,15 +84,43 @@ function useApp() {
   );
 
   const setActivePage = useCallback(
-    (page: Block) => {
+    (page: Page) => {
       dispatch({ type: "set active page", page: page });
     },
     [dispatch]
   );
 
   const newPage = useCallback(
-    (page: SavedBlock) => {
+    (page: Page) => {
       dispatch({ type: "new page", page: page });
+    },
+    [dispatch]
+  );
+
+  const saveNewPage = useCallback(
+    async (idxClient: IDX, ceramic: CeramicClient, page: Page) => {
+      dispatch({ type: "save page", page: page });
+      const { id, saveState, ...pageParams } = page;
+      const savedPage = await idx.createPage(idxClient, ceramic, pageParams);
+      dispatch({
+        type: "save page complete",
+        page: page,
+        savedPage: savedPage,
+      });
+    },
+    [dispatch]
+  );
+
+  const savePage = useCallback(
+    async (ceramic: CeramicClient, page: Page) => {
+      dispatch({ type: "save page", page: page });
+      const { id, saveState, ...pageParams } = page;
+      await idx.updatePage(ceramic, pageParams, id);
+      dispatch({
+        type: "save page complete",
+        page: page,
+        savedPage: page,
+      });
     },
     [dispatch]
   );
@@ -107,6 +135,8 @@ function useApp() {
     setActiveBlock,
     setActivePage,
     newPage,
+    saveNewPage,
+    savePage,
   };
 }
 

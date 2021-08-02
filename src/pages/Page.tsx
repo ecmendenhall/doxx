@@ -3,13 +3,13 @@ import Grid from "../components/Grid";
 import PagesList from "../components/PagesList";
 import Sidebar from "../components/Sidebar";
 import Connections from "../components/Connections";
-import Blocks from "../components/Blocks";
 import Editor from "../components/Editor";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useApp from "../hooks/useApp";
 import ceramic from "../lib/ceramic";
 import NotFound from "../components/NotFound";
+import PageHeader from "../components/PageHeader";
 
 interface Params {
   id: string;
@@ -50,7 +50,7 @@ function Page() {
           <NotFound />
         ) : (
           <Editor>
-            <Blocks />
+            <PageHeader />
           </Editor>
         )}
         <Connections />
