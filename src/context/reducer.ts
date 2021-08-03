@@ -275,6 +275,10 @@ export const reducer = (state: State, action: Action): State => {
           ...state.pages,
           pages: state.pages.pages.set(action.page.id, action.page),
         },
+        activePage:
+          state.activePage && state.activePage.id === action.page.id
+            ? action.page
+            : state.activePage,
       };
     case "set page":
       return {
@@ -283,6 +287,10 @@ export const reducer = (state: State, action: Action): State => {
           ...state.pages,
           pages: state.pages.pages.set(action.page.id, action.page),
         },
+        activePage:
+          state.activePage && state.activePage.id === action.page.id
+            ? action.page
+            : state.activePage,
       };
     case "save page":
       return {
@@ -294,6 +302,10 @@ export const reducer = (state: State, action: Action): State => {
             saveState: "saving",
           }),
         },
+        activePage:
+          state.activePage && state.activePage.id === action.page.id
+            ? action.page
+            : state.activePage,
       };
     case "save page complete":
       const newPages = new Map(state.pages.pages);
@@ -307,6 +319,10 @@ export const reducer = (state: State, action: Action): State => {
             saveState: "saved",
           }),
         },
+        activePage:
+          state.activePage && state.activePage.id === action.page.id
+            ? action.savedPage
+            : state.activePage,
       };
     case "new block":
       return {

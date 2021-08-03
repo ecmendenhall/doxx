@@ -108,7 +108,7 @@ function useApp() {
         savedPage: savedPage,
       });
     },
-    [dispatch]
+    [dispatch, state.activePage]
   );
 
   const savePage = useCallback(
