@@ -5,6 +5,7 @@ import { Picker } from "emoji-mart";
 import { useState } from "react";
 import type { BaseEmoji } from "emoji-mart";
 import ContentEditable from "react-contenteditable";
+import AddBlock from "./AddBlock";
 
 interface Props {
   activePage: Page;
@@ -39,7 +40,7 @@ const Emoji = ({ activePage }: Props) => {
     const updatedPage = { ...activePage, format: { page_icon: emoji } };
     setPickerActive(false);
     setActivePage(updatedPage);
-    if (ceramic.status == "done" && idx.status == "done") {
+    if (ceramic.status === "done" && idx.status === "done") {
       savePage(ceramic.ceramic, updatedPage);
     }
   };
@@ -70,7 +71,10 @@ const Title = ({ activePage }: Props) => {
     (evt) => {
       const updatedPage = {
         ...activePage,
-        properties: { ...activePage.properties, title: [[evt.target.value]] },
+        properties: {
+          ...activePage.properties,
+          title: [[evt.target.value.trim()]],
+        },
       };
       setActivePage(updatedPage);
     },
@@ -78,7 +82,7 @@ const Title = ({ activePage }: Props) => {
   );
 
   const handleBlur = useRefCallback(() => {
-    if (ceramic.status == "done" && idx.status == "done") {
+    if (ceramic.status === "done" && idx.status === "done") {
       savePage(ceramic.ceramic, activePage);
     }
   }, [activePage]);
@@ -105,6 +109,7 @@ const PageHeader = () => {
       <div className="text-xl">
         <Emoji activePage={activePage} />
         <Title activePage={activePage} />
+        <AddBlock />
       </div>
     );
   } else {

@@ -10,6 +10,12 @@ const PagesList = () => {
     setActivePage,
   } = useApp();
 
+  const convert = (html: string) => {
+    var divContainer = document.createElement("div");
+    divContainer.innerHTML = html;
+    return (divContainer.textContent || "").replaceAll(/\n/g, " ");
+  };
+
   const pageIcon = (page: Page) => {
     if (page.saveState === "saving") {
       return (
@@ -54,7 +60,7 @@ const PagesList = () => {
                     : "hover:bg-purple-300"
                 } py-1 px-4 cursor-pointer truncate`}
               >
-                {pageIcon(page)} {page.properties.title}
+                {pageIcon(page)} {convert(page.properties.title[0][0])}
               </li>
             );
           })
