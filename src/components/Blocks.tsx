@@ -4,7 +4,10 @@ import useApp from "../hooks/useApp";
 
 const Blocks = () => {
   const {
-    state: { blocks, activePage },
+    state: {
+      blocks: { blocks, drafts },
+      activePage,
+    },
   } = useApp();
 
   const renderBlock = (block: Block) => {
@@ -18,13 +21,18 @@ const Blocks = () => {
 
   const renderBlocks = (blockIds: string[]) => {
     return blockIds.map((id: string) => {
-      const block = blocks.blocks.get(id);
+      const block = blocks.get(id);
       return block && renderBlock(block);
     });
   };
 
   if (activePage) {
-    return <div>{renderBlocks(activePage.content)}</div>;
+    const page = blocks.get(activePage) || drafts.get(activePage);
+    if (page) {
+      return <div>{renderBlocks(page.content)}</div>;
+    } else {
+      return <div></div>;
+    }
   } else {
     return <div></div>;
   }

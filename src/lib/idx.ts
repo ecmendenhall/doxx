@@ -23,13 +23,7 @@ const loadBlocks = async (idx: IDX, ceramicClient: CeramicClient) => {
 const loadPages = async (idx: IDX, ceramicClient: CeramicClient) => {
   const pageIdsResponse = await idx.get<{ pages: Array<string> }>("pages");
   const pageIds = pageIdsResponse?.pages ?? [];
-  const pagesResponse = await ceramic.readBlocks(ceramicClient, pageIds);
-  let pages = new Map<string, Page>();
-  pagesResponse.forEach((page) => {
-    pages.set(page.id, { ...page, saveState: "saved" });
-  });
-  console.log(pages);
-  return pages;
+  return pageIds;
 };
 
 const createBlock = async (
@@ -43,6 +37,7 @@ const createBlock = async (
   });
   const blockIndex = await idx.get<BlockIndex>("blocks");
   const blocks = blockIndex?.blocks ?? [];
+  console.log(blockIndex);
   await idx.set("blocks", {
     blocks: [...blocks, newBlock.id.toUrl()],
   });

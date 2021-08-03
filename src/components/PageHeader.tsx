@@ -31,17 +31,17 @@ const EmojiPicker = ({ active, onSelect }: EmojiPickerProps) => {
 const Emoji = ({ activePage }: Props) => {
   const {
     state: { ceramic, idx },
-    savePage,
-    setActivePage,
+    setBlock,
+    saveBlock,
   } = useApp();
   const [pickerActive, setPickerActive] = useState(false);
 
   const onSelect = (emoji: string) => {
     const updatedPage = { ...activePage, format: { page_icon: emoji } };
     setPickerActive(false);
-    setActivePage(updatedPage);
+    setBlock(updatedPage);
     if (ceramic.status === "done" && idx.status === "done") {
-      savePage(ceramic.ceramic, updatedPage);
+      saveBlock(ceramic.ceramic, updatedPage);
     }
   };
 
@@ -63,8 +63,8 @@ const Emoji = ({ activePage }: Props) => {
 const Title = ({ activePage }: Props) => {
   const {
     state: { ceramic, idx },
-    savePage,
-    setActivePage,
+    setBlock,
+    saveBlock,
   } = useApp();
 
   const handleChange = useRefCallback(
@@ -76,14 +76,14 @@ const Title = ({ activePage }: Props) => {
           title: [[evt.target.value.trim()]],
         },
       };
-      setActivePage(updatedPage);
+      setBlock(updatedPage);
     },
     [activePage]
   );
 
   const handleBlur = useRefCallback(() => {
     if (ceramic.status === "done" && idx.status === "done") {
-      savePage(ceramic.ceramic, activePage);
+      saveBlock(ceramic.ceramic, activePage);
     }
   }, [activePage]);
 
@@ -101,17 +101,25 @@ const Title = ({ activePage }: Props) => {
 
 const PageHeader = () => {
   const {
-    state: { activePage },
+    state: {
+      activePage,
+      blocks: { blocks, drafts },
+    },
   } = useApp();
 
   if (activePage) {
-    return (
-      <div className="text-xl">
-        <Emoji activePage={activePage} />
-        <Title activePage={activePage} />
-        <AddBlock />
-      </div>
-    );
+    const page = blocks.get(activePage) || drafts.get(activePage);
+    if (page) {
+      return (
+        <div className="text-xl">
+          <Emoji activePage={page} />
+          <Title activePage={page} />
+          <AddBlock />
+        </div>
+      );
+    } else {
+      return <div></div>;
+    }
   } else {
     return <div></div>;
   }

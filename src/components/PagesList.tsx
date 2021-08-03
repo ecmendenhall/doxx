@@ -3,11 +3,12 @@ import useApp from "../hooks/useApp";
 
 const PagesList = () => {
   const {
+    setActivePage,
     state: {
-      pages: { status, pages },
+      blocks: { blocks, drafts },
+      pages: { status, pageIds, draftIds },
       activePage,
     },
-    setActivePage,
   } = useApp();
 
   const convert = (html: string) => {
@@ -50,19 +51,22 @@ const PagesList = () => {
   return (
     <ul>
       {status === "done"
-        ? Array.from(pages).map(([id, page]) => {
-            return (
-              <li
-                onClick={() => setActivePage(page)}
-                className={`${
-                  activePage && activePage.id === id
-                    ? "hover:bg-purple-400 bg-purple-300"
-                    : "hover:bg-purple-300"
-                } py-1 px-4 cursor-pointer truncate`}
-              >
-                {pageIcon(page)} {convert(page.properties.title[0][0])}
-              </li>
-            );
+        ? [...pageIds, ...draftIds].map((id) => {
+            const page = blocks.get(id) || drafts.get(id);
+            if (page) {
+              return (
+                <li
+                  onClick={() => setActivePage(page.id)}
+                  className={`${
+                    activePage === id
+                      ? "hover:bg-purple-400 bg-purple-300"
+                      : "hover:bg-purple-300"
+                  } py-1 px-4 cursor-pointer truncate`}
+                >
+                  {pageIcon(page)} {convert(page.properties.title[0][0])}
+                </li>
+              );
+            }
           })
         : ""}
     </ul>

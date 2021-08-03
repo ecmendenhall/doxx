@@ -4,7 +4,10 @@ import useApp from "../hooks/useApp";
 
 const CopyLink = () => {
   const {
-    state: { activePage },
+    state: {
+      activePage,
+      blocks: { blocks, drafts },
+    },
   } = useApp();
   const [copyStatus, setCopyStatus] = useState("pending");
 
@@ -18,11 +21,13 @@ const CopyLink = () => {
     }, 1800);
   };
 
+  const page = blocks.get(activePage) || drafts.get(activePage);
+
   return (
     <span>
-      {activePage && (
+      {page && (
         <button
-          onClick={() => copy(activePage)}
+          onClick={() => copy(page)}
           className="bg-gray-100 hover:bg-gray-300 py-1 px-2 rounded-lg shadow-md"
         >
           <svg

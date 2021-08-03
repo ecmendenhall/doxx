@@ -42,28 +42,40 @@ export type CeramicState =
 type BlocksPendingState = {
   status: PendingStatus;
   blocks: Map<string, Block>;
+  drafts: Map<string, Block>;
 };
 type BlocksFailedState = {
   status: "failed";
   error: Error;
   blocks: Map<string, Block>;
+  drafts: Map<string, Block>;
 };
-type BlocksLoadedState = { status: "done"; blocks: Map<string, Block> };
+type BlocksLoadedState = {
+  status: "done";
+  blocks: Map<string, Block>;
+  drafts: Map<string, Block>;
+};
 type BlocksState = BlocksPendingState | BlocksFailedState | BlocksLoadedState;
-type ActiveBlockState = Block | null;
 
 type PagesPendingState = {
   status: PendingStatus;
-  pages: Map<string, Page>;
+  pageIds: string[];
+  draftIds: string[];
 };
 type PagesFailedState = {
   status: "failed";
   error: Error;
-  pages: Map<string, Page>;
+  pageIds: string[];
+  draftIds: string[];
 };
-type PagesLoadedState = { status: "done"; pages: Map<string, Page> };
+type PagesLoadedState = {
+  status: "done";
+  pageIds: string[];
+  draftIds: string[];
+};
 type PagesState = PagesPendingState | PagesFailedState | PagesLoadedState;
-type ActivePageState = Page | null;
+
+type ActivePageState = string;
 
 export interface State {
   provider: ProviderState;
@@ -71,7 +83,6 @@ export interface State {
   idx: IDXState;
   pages: PagesState;
   blocks: BlocksState;
-  activeBlock: ActiveBlockState;
   activePage: ActivePageState;
 }
 
@@ -113,51 +124,51 @@ export type SetBlocks = {
 };
 export type NewBlock = { type: "new block"; block: Block };
 export type SaveBlock = { type: "save block"; block: Block };
+export type SaveDraftBlock = { type: "save draft block"; block: Block };
+export type SetBlock = { type: "set block"; block: Block };
+export type SetDraftBlock = { type: "set draft block"; block: Block };
 export type SaveBlockComplete = {
   type: "save block complete";
   block: Block;
   savedBlock: Block;
 };
+
 export type BlocksAction =
   | LoadBlocks
   | LoadBlocksFailed
   | SetBlocks
   | NewBlock
+  | SetBlock
   | SaveBlock
+  | SetDraftBlock
+  | SaveDraftBlock
   | SaveBlockComplete;
-
-export type SetActiveBlock = { type: "set active block"; block: Block };
 
 export type LoadPages = { type: "pages loading" };
 export type LoadPagesFailed = { type: "pages failed"; error: Error };
-export type SetPages = { type: "pages loaded"; pages: Map<string, Page> };
-export type NewPage = { type: "new page"; page: Page };
-export type SetPage = { type: "set page"; page: Page };
-export type SavePage = { type: "save page"; page: Page };
+export type SetPages = { type: "pages loaded"; pageIds: string[] };
+export type NewPage = { type: "new page"; pageId: string };
 export type SavePageComplete = {
   type: "save page complete";
-  page: Page;
-  savedPage: Page;
+  pageId: string;
+  savedPageId: string;
 };
+export type SetActivePage = { type: "set active page"; pageId: string };
+
 export type PagesAction =
   | LoadPages
   | LoadPagesFailed
   | SetPages
   | NewPage
-  | SetPage
-  | SavePage
-  | SavePageComplete;
-
-export type SetActivePage = { type: "set active page"; page: Page };
+  | SavePageComplete
+  | SetActivePage;
 
 export type Action =
   | ProviderAction
   | CeramicAction
   | IDXAuthAction
   | BlocksAction
-  | PagesAction
-  | SetActiveBlock
-  | SetActivePage;
+  | PagesAction;
 
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -232,7 +243,7 @@ export const reducer = (state: State, action: Action): State => {
     case "blocks loaded":
       return {
         ...state,
-        blocks: { status: "done", blocks: action.blocks },
+        blocks: { ...state.blocks, status: "done", blocks: action.blocks },
       };
     case "blocks failed":
       return {
@@ -247,89 +258,43 @@ export const reducer = (state: State, action: Action): State => {
     case "pages loaded":
       return {
         ...state,
-        pages: { status: "done", pages: action.pages },
+        pages: { ...state.pages, status: "done", pageIds: action.pageIds },
       };
     case "pages failed":
       return {
         ...state,
         pages: { ...state.pages, status: "failed", error: action.error },
       };
-    case "set active block":
-      return {
-        ...state,
-        activeBlock: action.block,
-      };
-    case "set active page":
-      return {
-        ...state,
-        pages: {
-          ...state.pages,
-          pages: state.pages.pages.set(action.page.id, action.page),
-        },
-        activePage: action.page,
-      };
     case "new page":
       return {
         ...state,
         pages: {
           ...state.pages,
-          pages: state.pages.pages.set(action.page.id, action.page),
+          draftIds: [...state.pages.draftIds, action.pageId],
         },
-        activePage:
-          state.activePage && state.activePage.id === action.page.id
-            ? action.page
-            : state.activePage,
-      };
-    case "set page":
-      return {
-        ...state,
-        pages: {
-          ...state.pages,
-          pages: state.pages.pages.set(action.page.id, action.page),
-        },
-        activePage:
-          state.activePage && state.activePage.id === action.page.id
-            ? action.page
-            : state.activePage,
-      };
-    case "save page":
-      return {
-        ...state,
-        pages: {
-          ...state.pages,
-          pages: state.pages.pages.set(action.page.id, {
-            ...action.page,
-            saveState: "saving",
-          }),
-        },
-        activePage:
-          state.activePage && state.activePage.id === action.page.id
-            ? action.page
-            : state.activePage,
-      };
-    case "save page complete":
-      const newPages = new Map(state.pages.pages);
-      newPages.delete(action.page.id);
-      return {
-        ...state,
-        pages: {
-          ...state.pages,
-          pages: newPages.set(action.savedPage.id, {
-            ...action.savedPage,
-            saveState: "saved",
-          }),
-        },
-        activePage:
-          state.activePage && state.activePage.id === action.page.id
-            ? action.savedPage
-            : state.activePage,
       };
     case "new block":
       return {
         ...state,
         blocks: {
           ...state.blocks,
+          drafts: state.blocks.drafts.set(action.block.id, action.block),
+        },
+      };
+    case "set block":
+      return {
+        ...state,
+        blocks: {
+          ...state.blocks,
           blocks: state.blocks.blocks.set(action.block.id, action.block),
+        },
+      };
+    case "set draft block":
+      return {
+        ...state,
+        blocks: {
+          ...state.blocks,
+          drafts: state.blocks.drafts.set(action.block.id, action.block),
         },
       };
     case "save block":
@@ -343,18 +308,47 @@ export const reducer = (state: State, action: Action): State => {
           }),
         },
       };
-    case "save block complete":
-      const newBlocks = new Map(state.blocks.blocks);
-      newBlocks.delete(action.block.id);
+    case "save draft block":
       return {
         ...state,
         blocks: {
           ...state.blocks,
-          blocks: newBlocks.set(action.savedBlock.id, {
+          drafts: state.blocks.drafts.set(action.block.id, {
+            ...action.block,
+            saveState: "saving",
+          }),
+        },
+      };
+    case "save block complete":
+      const newDrafts = new Map(state.blocks.drafts);
+      newDrafts.delete(action.block.id);
+      return {
+        ...state,
+        blocks: {
+          ...state.blocks,
+          blocks: state.blocks.blocks.set(action.savedBlock.id, {
             ...action.savedBlock,
             saveState: "saved",
           }),
+          drafts: newDrafts,
         },
+      };
+    case "save page complete":
+      const newDraftIds = state.pages.draftIds.filter(
+        (id) => id !== action.pageId
+      );
+      return {
+        ...state,
+        pages: {
+          ...state.pages,
+          pageIds: [...state.pages.pageIds, action.savedPageId],
+          draftIds: newDraftIds,
+        },
+      };
+    case "set active page":
+      return {
+        ...state,
+        activePage: action.pageId,
       };
     default:
       return state;
@@ -365,8 +359,11 @@ export const initialState: State = {
   provider: { status: "pending" },
   ceramic: { status: "pending" },
   idx: { status: "pending" },
-  pages: { status: "pending", pages: new Map<string, Page>() },
-  blocks: { status: "pending", blocks: new Map<string, Block>() },
-  activeBlock: null,
-  activePage: null,
+  pages: { status: "pending", pageIds: [], draftIds: [] },
+  activePage: "",
+  blocks: {
+    status: "pending",
+    blocks: new Map<string, Block>(),
+    drafts: new Map<string, Block>(),
+  },
 };

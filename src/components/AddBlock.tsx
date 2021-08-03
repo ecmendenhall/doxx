@@ -20,7 +20,12 @@ const createEmptyPage = (): Page => {
 
 const AddBlock = () => {
   const {
-    state: { idx, ceramic, activePage },
+    state: {
+      idx,
+      ceramic,
+      activePage,
+      blocks: { blocks, drafts },
+    },
     newBlock,
     saveNewBlock,
   } = useApp();
@@ -29,9 +34,12 @@ const AddBlock = () => {
     <button
       onClick={async () => {
         if (idx.status === "done" && ceramic.status === "done" && activePage) {
-          const block = createEmptyPage();
-          newBlock(block, activePage);
-          saveNewBlock(idx.idx, ceramic.ceramic, block, activePage);
+          const page = blocks.get(activePage) || drafts.get(activePage);
+          if (page) {
+            const block = createEmptyPage();
+            newBlock(block, page);
+            saveNewBlock(idx.idx, ceramic.ceramic, block, page);
+          }
         }
       }}
       className="bg-gray-50 hover:bg-gray-100 text-base py-1 px-2 rounded-lg"

@@ -31,8 +31,8 @@ function useApp() {
     async (idxClient: IDX, ceramic: CeramicClient) => {
       try {
         dispatch({ type: "pages loading" });
-        const pages = await idx.loadPages(idxClient, ceramic);
-        dispatch({ type: "pages loaded", pages: pages });
+        const pageIds = await idx.loadPages(idxClient, ceramic);
+        dispatch({ type: "pages loaded", pageIds: pageIds });
       } catch (err) {
         dispatch({ type: "pages failed", error: err });
       }
@@ -76,64 +76,35 @@ function useApp() {
     }
   }, [dispatch]);
 
-  const setActiveBlock = useCallback(
-    (block: Block) => {
-      dispatch({ type: "set active block", block: block });
-    },
-    [dispatch]
-  );
-
-  const setActivePage = useCallback(
-    (page: Page) => {
-      dispatch({ type: "set active page", page: page });
-    },
-    [dispatch]
-  );
-
-  const newPage = useCallback(
-    (page: Page) => {
-      dispatch({ type: "new page", page: page });
-    },
-    [dispatch]
-  );
-
   const saveNewPage = useCallback(
     async (idxClient: IDX, ceramic: CeramicClient, page: Page) => {
-      dispatch({ type: "save page", page: page });
+      dispatch({ type: "new page", pageId: page.id });
+      dispatch({ type: "new block", block: page });
+      dispatch({ type: "save draft block", block: page });
       const { id, saveState, ...pageParams } = page;
       const savedPage = await idx.createPage(idxClient, ceramic, pageParams);
       dispatch({
-        type: "save page complete",
-        page: page,
-        savedPage: savedPage,
+        type: "save block complete",
+        block: page,
+        savedBlock: savedPage,
       });
-    },
-    [dispatch, state.activePage]
-  );
-
-  const savePage = useCallback(
-    async (ceramic: CeramicClient, page: Page) => {
-      dispatch({ type: "save page", page: page });
-      const { id, saveState, ...pageParams } = page;
-      await idx.updatePage(ceramic, pageParams, id);
       dispatch({
         type: "save page complete",
-        page: page,
-        savedPage: page,
+        pageId: page.id,
+        savedPageId: savedPage.id,
       });
     },
     [dispatch]
   );
 
   const newBlock = useCallback(
-    (block: Block, page: Page) => {
+    (block: Block, parent: Block) => {
       dispatch({ type: "new block", block: block });
-      const updatedPage = {
-        ...page,
-        content: [...page.content, block.id],
+      const updatedParent = {
+        ...parent,
+        content: [...parent.content, block.id],
       };
-      console.log(updatedPage);
-      dispatch({ type: "set page", page: updatedPage });
+      dispatch({ type: "set block", block: updatedParent });
     },
     [dispatch]
   );
@@ -143,34 +114,34 @@ function useApp() {
       idxClient: IDX,
       ceramic: CeramicClient,
       block: Block,
-      page: Page
+      parent: Block
     ) => {
-      dispatch({ type: "save page", page: page });
-      dispatch({ type: "save block", block: block });
+      dispatch({ type: "save block", block: parent });
+      dispatch({ type: "save draft block", block: block });
       const { id: blockId, saveState: blockSaveState, ...blockParams } = block;
       const savedBlock = await idx.createBlock(idxClient, ceramic, {
         ...blockParams,
-        parent: page.id,
+        parent: parent.id,
       });
+      const updatedParent = {
+        ...parent,
+        content: [...parent.content, savedBlock.id],
+      };
+      const {
+        id: parentId,
+        saveState: parentSaveState,
+        ...parentParams
+      } = updatedParent;
+      await idx.updateBlock(ceramic, parentParams, parentId);
       dispatch({
         type: "save block complete",
         block: block,
         savedBlock: savedBlock,
       });
-      const updatedPage = {
-        ...page,
-        content: [...page.content, savedBlock.id],
-      };
-      const {
-        id: pageId,
-        saveState: pageSaveState,
-        ...pageParams
-      } = updatedPage;
-      await idx.updatePage(ceramic, pageParams, pageId);
       dispatch({
-        type: "save page complete",
-        page: page,
-        savedPage: updatedPage,
+        type: "save block complete",
+        block: parent,
+        savedBlock: updatedParent,
       });
     },
     [dispatch]
@@ -190,6 +161,20 @@ function useApp() {
     [dispatch]
   );
 
+  const setBlock = useCallback(
+    async (block: Block) => {
+      dispatch({ type: "set block", block: block });
+    },
+    [dispatch]
+  );
+
+  const setActivePage = useCallback(
+    async (pageId: string) => {
+      dispatch({ type: "set active page", pageId: pageId });
+    },
+    [dispatch]
+  );
+
   return {
     state,
     loadProvider,
@@ -197,14 +182,12 @@ function useApp() {
     loadIDX,
     loadPages,
     loadBlocks,
-    setActiveBlock,
-    setActivePage,
-    newPage,
     saveNewPage,
-    savePage,
     newBlock,
     saveNewBlock,
     saveBlock,
+    setBlock,
+    setActivePage,
   };
 }
 

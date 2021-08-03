@@ -24,9 +24,7 @@ const createEmptyPage = (): Page => {
 const CreatePage = () => {
   const {
     state: { idx, ceramic },
-    newPage,
     saveNewPage,
-    setActivePage,
   } = useApp();
 
   return (
@@ -34,8 +32,6 @@ const CreatePage = () => {
       onClick={async () => {
         if (idx.status === "done" && ceramic.status === "done") {
           const page = createEmptyPage();
-          newPage(page);
-          setActivePage(page);
           saveNewPage(idx.idx, ceramic.ceramic, page);
         }
       }}

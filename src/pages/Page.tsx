@@ -29,7 +29,7 @@ function Page() {
       if (state.ceramic.status === "done") {
         try {
           const page = await ceramic.readBlock(state.ceramic.ceramic, id);
-          setActivePage(page);
+          setActivePage(page.id);
           setLoadingState("loaded");
           console.log(page);
         } catch (e) {
