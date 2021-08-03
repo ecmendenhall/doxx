@@ -1,4 +1,4 @@
-import { Block, Page } from "../blocks";
+import { Page } from "../blocks";
 import useApp from "../hooks/useApp";
 import { v4 as uuid } from "uuid";
 

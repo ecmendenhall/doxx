@@ -1,8 +1,5 @@
-import CeramicClient from "@ceramicnetwork/http-client";
-import { IDX } from "@ceramicstudio/idx";
 import { Page } from "../blocks";
 import useApp from "../hooks/useApp";
-import idx from "../lib/idx";
 import { v4 as uuid } from "uuid";
 
 const createEmptyPage = (): Page => {

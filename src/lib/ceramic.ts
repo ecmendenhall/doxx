@@ -13,7 +13,6 @@ import { Schema } from "../schemas";
 import { definitions } from "../config/deployedSchemas.json";
 import { Block } from "../blocks";
 import { BlockParams } from "./idx";
-import BlockSchema from "../schemas/eth.doxx.Block";
 
 const API_URL = "https://ceramic-clay.3boxlabs.com";
 const ceramic = new CeramicClient(API_URL);
@@ -94,27 +93,30 @@ const readBlocks = async (
   ceramic: CeramicClient,
   blockIds: string[]
 ): Promise<Block[]> => {
-  /* Multiqueries don't seem to return latest state?
+  // Multiqueries don't seem to return latest state?
   const queries = blockIds.map((id) => {
     return { streamId: id };
   });
   const blocksResponse = await ceramic.multiQuery(queries);
   let blocks = [];
   for (const key in blocksResponse) {
-    let id = `ceramic://${key}`;
-    let stream = blocksResponse[key];
+    const id = `ceramic://${key}`;
+    const content = (blocksResponse[key] as TileDocument)
+      .content as BlockParams;
     blocks.push({
       id: id,
-      ...blocksResponse[key].state.content,
-    });
-  }
-  */
-  let blocks: Block[] = [];
-  for (const id of blockIds) {
-    const block = await readBlock(ceramic, id);
-    blocks.push(block);
+      saveState: "saved",
+      ...content,
+    } as Block);
   }
   return blocks;
+
+  // let blocks: Block[] = [];
+  // for (const id of blockIds) {
+  //   const block = await readBlock(ceramic, id);
+  //   blocks.push(block);
+  // }
+  // return blocks;
 };
 
 const exp = {

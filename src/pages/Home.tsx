@@ -10,8 +10,6 @@ import useApp from "../hooks/useApp";
 import { useEffect } from "react";
 import Menu from "../components/Menu";
 import CopyLink from "../components/CopyLink";
-import PageHeader from "../components/PageHeader";
-import Blocks from "../components/Blocks";
 
 function Home() {
   const { state, loadCeramic, loadPages, loadBlocks } = useApp();
@@ -38,10 +36,7 @@ function Home() {
           <CopyLink />
           <ConnectWallet />
         </Menu>
-        <Editor>
-          <PageHeader />
-          <Blocks />
-        </Editor>
+        <Editor />
         <Connections />
       </Content>
     </Grid>

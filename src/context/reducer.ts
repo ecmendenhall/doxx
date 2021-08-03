@@ -1,7 +1,7 @@
 import CeramicClient from "@ceramicnetwork/http-client";
 import { IDX } from "@ceramicstudio/idx";
 import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
-import { Block, Page } from "../blocks";
+import { Block } from "../blocks";
 
 type PendingStatus = "pending" | "loading";
 

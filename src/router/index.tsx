@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import EditPage from "../pages/EditPage";
 import EditProfile from "../pages/EditProfile";
 import Home from "../pages/Home";
 import NotFound from "../pages/NotFound";
@@ -9,6 +10,9 @@ const Routes = () => {
   return (
     <Router>
       <Switch>
+        <Route exact path="/edit/:id">
+          <EditPage />
+        </Route>
         <Route exact path="/pages/:id">
           <Page />
         </Route>

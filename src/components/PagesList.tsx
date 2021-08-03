@@ -1,9 +1,9 @@
-import { Page, SaveState } from "../blocks";
+import { Link } from "react-router-dom";
+import { Page } from "../blocks";
 import useApp from "../hooks/useApp";
 
 const PagesList = () => {
   const {
-    setActivePage,
     state: {
       blocks: { blocks, drafts },
       pages: { status, pageIds, draftIds },
@@ -55,17 +55,20 @@ const PagesList = () => {
             const page = blocks.get(id) || drafts.get(id);
             if (page) {
               return (
-                <li
-                  onClick={() => setActivePage(page.id)}
-                  className={`${
-                    activePage === id
-                      ? "hover:bg-purple-400 bg-purple-300"
-                      : "hover:bg-purple-300"
-                  } py-1 px-4 cursor-pointer truncate`}
-                >
-                  {pageIcon(page)} {convert(page.properties.title[0][0])}
-                </li>
+                <Link to={`/edit/${id.split("://")[1]}`}>
+                  <li
+                    className={`${
+                      activePage === id
+                        ? "hover:bg-purple-400 bg-purple-300"
+                        : "hover:bg-purple-300"
+                    } py-1 px-4 cursor-pointer truncate`}
+                  >
+                    {pageIcon(page)} {convert(page.properties.title[0][0])}
+                  </li>
+                </Link>
               );
+            } else {
+              return <div></div>;
             }
           })
         : ""}
