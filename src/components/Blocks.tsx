@@ -1,5 +1,7 @@
 import { Block } from "../blocks";
+import Heading from "../blocks/Heading";
 import Page from "../blocks/Page";
+import Text from "../blocks/Text";
 import useActivePage from "../hooks/useActivePage";
 import useApp from "../hooks/useApp";
 
@@ -15,6 +17,10 @@ const Blocks = () => {
     switch (block.type) {
       case "page":
         return <Page block={block} />;
+      case "text":
+        return <Text block={block} />;
+      case "heading":
+        return <Heading block={block} />;
       default:
         return <div></div>;
     }
