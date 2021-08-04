@@ -1,18 +1,18 @@
-import Content from "../components/Content";
-import Grid from "../components/Grid";
+import Content from "../components/ui/Content";
+import Grid from "../components/ui/Grid";
 import PagesList from "../components/PagesList";
 import Sidebar from "../components/ui/Sidebar";
-import Connections from "../components/Connections";
-import Editor from "../components/Editor";
+import Connections from "../components/StatusPanel";
+import Editor from "../components/ui/Editor";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useApp from "../hooks/useApp";
-import NotFound from "../components/NotFound";
+import NotFound from "../components/ui/NotFound";
 import PageHeader from "../components/PageHeader";
 import Blocks from "../components/Blocks";
-import Menu from "../components/Menu";
+import Menu from "../components/ui/Menu";
 import CopyLink from "../components/CopyLink";
-import ConnectWallet from "../components/ConnectWallet";
+import ConnectWallet from "../components/ConnectButton";
 
 interface Params {
   id: string;

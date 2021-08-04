@@ -1,14 +1,15 @@
 import { Block } from "../blocks";
 import Page from "../blocks/Page";
+import useActivePage from "../hooks/useActivePage";
 import useApp from "../hooks/useApp";
 
 const Blocks = () => {
   const {
     state: {
       blocks: { blocks, drafts },
-      activePage,
     },
   } = useApp();
+  const { page } = useActivePage();
 
   const renderBlock = (block: Block) => {
     switch (block.type) {
@@ -21,21 +22,12 @@ const Blocks = () => {
 
   const renderBlocks = (blockIds: string[]) => {
     return blockIds.map((id: string) => {
-      const block = blocks.get(id);
+      const block = blocks.get(id) || drafts.get(id);
       return block && renderBlock(block);
     });
   };
 
-  if (activePage) {
-    const page = blocks.get(activePage) || drafts.get(activePage);
-    if (page) {
-      return <div>{renderBlocks(page.content)}</div>;
-    } else {
-      return <div></div>;
-    }
-  } else {
-    return <div></div>;
-  }
+  return <div>{page && renderBlocks(page.content)}</div>;
 };
 
 export default Blocks;

@@ -2,8 +2,8 @@ interface Props {
   children?: React.ReactNode;
 }
 
-const Editor = ({ children }: Props) => {
+const PageContent = ({ children }: Props) => {
   return <div className="p-8 col-span-3">{children}</div>;
 };
 
-export default Editor;
+export default PageContent;

@@ -1,73 +1,17 @@
 import useApp from "../hooks/useApp";
+import Button from "./ui/Button";
 
-const formatAddress = function (address: string) {
-  return `${address.slice(0, 6)}…${address.slice(-4)}`;
-};
-
-const Connected = () => {
-  const { state } = useApp();
-
-  if (state.provider.status === "done") {
-    const { ensName, address } = state.provider;
-
-    return (
-      <button className="bg-purple-100 hover:bg-purple-300 py-1 px-2 rounded-lg shadow-md">
-        {ensName ? ensName : formatAddress(address)}
-      </button>
-    );
-  } else {
-    return <ConnectIDX />;
-  }
-};
-
-const ConnectIDX = () => {
-  const { state, loadIDX } = useApp();
-
-  if (state.provider.status === "done" && state.idx.status !== "done") {
-    const { provider } = state.provider;
-    return (
-      <button
-        onClick={() => {
-          loadIDX(provider);
-        }}
-        className="bg-purple-100 hover:bg-purple-300 py-1 px-2 rounded-lg shadow-md"
-      >
-        Connect IDX
-      </button>
-    );
-  } else {
-    return <Connected />;
-  }
-};
-
-const Connect = () => {
+export const ConnectWallet = () => {
   const { loadProvider, loadCeramic } = useApp();
 
+  const onClick = async () => {
+    await loadProvider();
+    await loadCeramic();
+  };
+
   return (
-    <button
-      className="bg-purple-100 hover:bg-purple-300 py-1 px-2 rounded-lg shadow-md"
-      onClick={async () => {
-        await loadProvider();
-        await loadCeramic();
-      }}
-    >
+    <Button onClick={onClick} primary>
       Connect Wallet
-    </button>
+    </Button>
   );
 };
-
-const ConnectButton = () => {
-  const { state } = useApp();
-
-  if (state.provider.status === "done") {
-    return <ConnectIDX />;
-  } else {
-    return <Connect />;
-  }
-};
-
-const ConnectWallet = () => {
-  return <ConnectButton />;
-};
-
-export default ConnectWallet;

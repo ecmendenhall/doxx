@@ -1,51 +1,28 @@
-import { Page } from "../blocks";
+import { createEmptyPage } from "../blocks";
+import useActivePage from "../hooks/useActivePage";
 import useApp from "../hooks/useApp";
-import { v4 as uuid } from "uuid";
-
-const createEmptyPage = (): Page => {
-  return {
-    id: uuid(),
-    saveState: "new",
-    type: "page",
-    properties: {
-      title: [["New Page"]],
-    },
-    content: [],
-    format: {
-      page_icon: "📑",
-    },
-    parent: "",
-  };
-};
+import Button from "./ui/Button";
 
 const AddBlock = () => {
   const {
-    state: {
-      idx,
-      ceramic,
-      activePage,
-      blocks: { blocks, drafts },
-    },
+    state: { idx, ceramic },
     newBlock,
     saveNewBlock,
   } = useApp();
+  const { page } = useActivePage();
+
+  const onClick = () => {
+    if (idx.status === "done" && ceramic.status === "done" && page) {
+      const block = createEmptyPage();
+      newBlock(block, page);
+      saveNewBlock(idx.idx, ceramic.ceramic, block, page);
+    }
+  };
 
   return (
-    <button
-      onClick={async () => {
-        if (idx.status === "done" && ceramic.status === "done" && activePage) {
-          const page = blocks.get(activePage) || drafts.get(activePage);
-          if (page) {
-            const block = createEmptyPage();
-            newBlock(block, page);
-            saveNewBlock(idx.idx, ceramic.ceramic, block, page);
-          }
-        }
-      }}
-      className="bg-gray-50 hover:bg-gray-100 text-base py-1 px-2 rounded-lg"
-    >
+    <Button onClick={onClick} primary={false}>
       <span>+</span> Add block
-    </button>
+    </Button>
   );
 };
 

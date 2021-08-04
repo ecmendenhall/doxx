@@ -1,9 +1,9 @@
-import Content from "../components/Content";
-import Grid from "../components/Grid";
+import Content from "../components/ui/Content";
+import Grid from "../components/ui/Grid";
 import PagesList from "../components/PagesList";
 import Sidebar from "../components/ui/Sidebar";
-import Connections from "../components/Connections";
-import NotFound from "../components/NotFound";
+import StatusPanel from "../components/StatusPanel";
+import NotFound from "../components/ui/NotFound";
 
 function NotFoundPage() {
   return (
@@ -13,7 +13,7 @@ function NotFoundPage() {
       </Sidebar>
       <Content>
         <NotFound />
-        <Connections />
+        <StatusPanel />
       </Content>
     </Grid>
   );

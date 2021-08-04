@@ -1,14 +1,14 @@
-import Content from "../components/Content";
-import Grid from "../components/Grid";
+import Content from "../components/ui/Content";
+import Grid from "../components/ui/Grid";
 import PagesList from "../components/PagesList";
 import Sidebar from "../components/ui/Sidebar";
-import Connections from "../components/Connections";
-import Editor from "../components/Editor";
+import StatusPanel from "../components/StatusPanel";
+import Editor from "../components/ui/Editor";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useApp from "../hooks/useApp";
 import ceramic from "../lib/ceramic";
-import NotFound from "../components/NotFound";
+import NotFound from "../components/ui/NotFound";
 import PageHeader from "../components/PageHeader";
 
 interface Params {
@@ -53,7 +53,7 @@ function Page() {
             <PageHeader />
           </Editor>
         )}
-        <Connections />
+        <StatusPanel />
       </Content>
     </Grid>
   );

@@ -1,9 +1,9 @@
-import Content from "../components/Content";
-import Grid from "../components/Grid";
+import Content from "../components/ui/Content";
+import Grid from "../components/ui/Grid";
 import PagesList from "../components/PagesList";
 import Sidebar from "../components/ui/Sidebar";
-import Connections from "../components/Connections";
-import Editor from "../components/Editor";
+import StatusPanel from "../components/StatusPanel";
+import Editor from "../components/ui/Editor";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
 import ceramic from "../lib/ceramic";
@@ -38,7 +38,7 @@ function ViewProfile() {
         <Editor>
           <p>View profile: {id}</p>
         </Editor>
-        <Connections />
+        <StatusPanel />
       </Content>
     </Grid>
   );

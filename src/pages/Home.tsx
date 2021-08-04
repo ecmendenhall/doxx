@@ -1,14 +1,14 @@
-import ConnectWallet from "../components/ConnectWallet";
-import Content from "../components/Content";
-import Grid from "../components/Grid";
+import ConnectWallet from "../components/ConnectButton";
+import Content from "../components/ui/Content";
+import Grid from "../components/ui/Grid";
 import CreatePage from "../components/CreatePage";
 import PagesList from "../components/PagesList";
 import Sidebar from "../components/ui/Sidebar";
-import Connections from "../components/Connections";
-import Editor from "../components/Editor";
+import StatusPanel from "../components/StatusPanel";
+import Editor from "../components/ui/Editor";
 import useApp from "../hooks/useApp";
 import { useEffect } from "react";
-import Menu from "../components/Menu";
+import Menu from "../components/ui/Menu";
 import CopyLink from "../components/CopyLink";
 
 function Home() {
@@ -37,7 +37,7 @@ function Home() {
           <ConnectWallet />
         </Menu>
         <Editor />
-        <Connections />
+        <StatusPanel />
       </Content>
     </Grid>
   );

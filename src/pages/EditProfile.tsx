@@ -1,10 +1,9 @@
-import Content from "../components/Content";
-import Grid from "../components/Grid";
+import Content from "../components/ui/Content";
+import Grid from "../components/ui/Grid";
 import PagesList from "../components/PagesList";
 import Sidebar from "../components/ui/Sidebar";
-import Connections from "../components/Connections";
-import Blocks from "../components/PageHeader";
-import Editor from "../components/Editor";
+import StatusPanel from "../components/StatusPanel";
+import Editor from "../components/ui/Editor";
 
 function EditProfile() {
   return (
@@ -16,7 +15,7 @@ function EditProfile() {
         <Editor>
           <p>Edit profile</p>
         </Editor>
-        <Connections />
+        <StatusPanel />
       </Content>
     </Grid>
   );
