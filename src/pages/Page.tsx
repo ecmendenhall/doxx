@@ -1,7 +1,7 @@
 import Content from "../components/Content";
 import Grid from "../components/Grid";
 import PagesList from "../components/PagesList";
-import Sidebar from "../components/Sidebar";
+import Sidebar from "../components/ui/Sidebar";
 import Connections from "../components/Connections";
 import Editor from "../components/Editor";
 import { useParams } from "react-router-dom";

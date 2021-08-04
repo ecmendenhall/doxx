@@ -13,7 +13,7 @@ const Blocks = () => {
   const renderBlock = (block: Block) => {
     switch (block.type) {
       case "page":
-        return <Page {...block} />;
+        return <Page block={block} />;
       default:
         return <div></div>;
     }

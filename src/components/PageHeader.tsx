@@ -1,4 +1,5 @@
-import { Page, useRefCallback } from "../blocks";
+import { Page } from "../blocks";
+import { useRefCallback } from "../hooks/useRefCallback";
 import useApp from "../hooks/useApp";
 import "emoji-mart/css/emoji-mart.css";
 import { Picker } from "emoji-mart";

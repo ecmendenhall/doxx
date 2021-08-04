@@ -1,18 +1,14 @@
 import { Block } from "../blocks";
-import useApp from "../hooks/useApp";
+import PageLink from "../components/ui/PageLink";
 
-const Page = ({ properties, format, id }: Block) => {
-  const { state, setActivePage } = useApp();
+interface Props {
+  block: Block;
+}
+
+const Page = ({ block }: Props) => {
   return (
-    <div
-      className="cursor-pointer"
-      onClick={() => {
-        const page = state.blocks.blocks.get(id);
-        page && setActivePage(page.id);
-      }}
-    >
-      <span className="text-l">{format.page_icon}</span>{" "}
-      <span className="underline">{properties.title}</span>
+    <div className="my-1">
+      <PageLink page={block} underline />
     </div>
   );
 };

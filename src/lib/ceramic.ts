@@ -79,7 +79,7 @@ const readBlock = async (
   blockId: string
 ): Promise<Block> => {
   const blockResponse = await ceramic.loadStream<TileDocument>(blockId);
-  const content = blockResponse.content as BlockParams;
+  const content: BlockParams = blockResponse.content as BlockParams;
   console.log("content");
   console.log(content);
   return {
@@ -93,7 +93,6 @@ const readBlocks = async (
   ceramic: CeramicClient,
   blockIds: string[]
 ): Promise<Block[]> => {
-  // Multiqueries don't seem to return latest state?
   const queries = blockIds.map((id) => {
     return { streamId: id };
   });
@@ -110,13 +109,6 @@ const readBlocks = async (
     } as Block);
   }
   return blocks;
-
-  // let blocks: Block[] = [];
-  // for (const id of blockIds) {
-  //   const block = await readBlock(ceramic, id);
-  //   blocks.push(block);
-  // }
-  // return blocks;
 };
 
 const exp = {
