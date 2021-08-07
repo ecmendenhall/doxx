@@ -102,7 +102,7 @@ function useApp() {
       dispatch({ type: "new block", block: block });
       const updatedParent = {
         ...parent,
-        content: [...parent.content, block.id],
+        drafts: [...parent.drafts, block.id],
       };
       dispatch({ type: "set block", block: updatedParent });
     },
@@ -116,16 +116,26 @@ function useApp() {
       block: Block,
       parent: Block
     ) => {
-      dispatch({ type: "save block", block: parent });
+      dispatch({ type: "new block", block: block });
+      let updatedParent = {
+        ...parent,
+        drafts: [...parent.drafts, block.id],
+      };
+      dispatch({ type: "save block", block: updatedParent });
       dispatch({ type: "save draft block", block: block });
       const { id: blockId, saveState: blockSaveState, ...blockParams } = block;
       const savedBlock = await idx.createBlock(idxClient, ceramic, {
         ...blockParams,
         parent: parent.id,
       });
-      const updatedParent = {
-        ...parent,
-        content: [...parent.content, savedBlock.id],
+      const latestParent =
+        state.blocks.blocks.get(parent.id) ||
+        state.blocks.drafts.get(parent.id) ||
+        parent;
+      updatedParent = {
+        ...latestParent,
+        content: [...latestParent.content, savedBlock.id],
+        drafts: latestParent.drafts.filter((id) => id !== block.id),
       };
       const {
         id: parentId,
@@ -133,10 +143,14 @@ function useApp() {
         ...parentParams
       } = updatedParent;
       await idx.updateBlock(ceramic, parentParams, parentId);
+      let latestBlock =
+        state.blocks.blocks.get(block.id) ||
+        state.blocks.drafts.get(block.id) ||
+        savedBlock;
       dispatch({
-        type: "save block complete",
+        type: "save draft block complete",
         block: block,
-        savedBlock: savedBlock,
+        savedBlock: { ...latestBlock, id: savedBlock.id },
       });
       dispatch({
         type: "save block complete",
@@ -144,7 +158,7 @@ function useApp() {
         savedBlock: updatedParent,
       });
     },
-    [dispatch]
+    [dispatch, state.blocks]
   );
 
   const saveBlock = useCallback(
@@ -163,14 +177,25 @@ function useApp() {
 
   const setBlock = useCallback(
     async (block: Block) => {
-      dispatch({ type: "set block", block: block });
+      if (state.blocks.drafts.has(block.id)) {
+        dispatch({ type: "set draft block", block: block });
+      } else {
+        dispatch({ type: "set block", block: block });
+      }
     },
-    [dispatch]
+    [dispatch, state.blocks]
   );
 
   const setActivePage = useCallback(
     async (pageId: string) => {
       dispatch({ type: "set active page", pageId: pageId });
+    },
+    [dispatch]
+  );
+
+  const setActiveBlock = useCallback(
+    async (blockId: string) => {
+      dispatch({ type: "set active block", blockId: blockId });
     },
     [dispatch]
   );
@@ -188,6 +213,7 @@ function useApp() {
     saveBlock,
     setBlock,
     setActivePage,
+    setActiveBlock,
   };
 }
 

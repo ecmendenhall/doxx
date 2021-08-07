@@ -9,7 +9,7 @@ interface Props {
 const StatusIndicator = ({ onClick, text, status }: Props) => {
   const className = `fill-current text-${statusColor(status)}`;
   return (
-    <button onClick={onClick}>
+    <button onClick={onClick} className="block">
       <span className={className}>
         <svg
           xmlns="http://www.w3.org/2000/svg"

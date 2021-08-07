@@ -1,10 +1,12 @@
 import { v4 as uuid } from "uuid";
+import Heading from "../components/ui/Heading";
 export type SaveState = "new" | "changed" | "saving" | "saved";
-export type BlockType = "page" | "text" | "heading";
+export type BlockType = "page" | "text" | HeadingType;
+export type HeadingType = "heading-1" | "heading-2" | "heading-3";
 
 export interface Page {
   id: string;
-  type: BlockType;
+  type: "page";
   properties: {
     title: string[][];
   };
@@ -14,11 +16,13 @@ export interface Page {
   };
   parent: string;
   saveState: SaveState;
+  drafts: string[];
+  key: string;
 }
 
 export interface Text {
   id: string;
-  type: BlockType;
+  type: "text";
   properties: {
     title: string[][];
   };
@@ -26,11 +30,13 @@ export interface Text {
   format: {};
   parent: string;
   saveState: SaveState;
+  drafts: string[];
+  key: string;
 }
 
 export interface Heading {
   id: string;
-  type: BlockType;
+  type: HeadingType;
   properties: {
     title: string[][];
   };
@@ -38,6 +44,8 @@ export interface Heading {
   format: {};
   parent: string;
   saveState: SaveState;
+  drafts: string[];
+  key: string;
 }
 
 export interface BlockIndex {
@@ -63,6 +71,8 @@ export const createEmptyPage = (): Page => {
       page_icon: "📑",
     },
     parent: "",
+    drafts: [],
+    key: uuid(),
   };
 };
 
@@ -77,19 +87,38 @@ export const createEmptyText = (): Text => {
     content: [],
     format: {},
     parent: "",
+    drafts: [],
+    key: uuid(),
   };
 };
 
-export const createEmptyHeading = (): Text => {
+export const createEmptyHeading = (type: HeadingType): Heading => {
   return {
     id: uuid(),
     saveState: "new",
-    type: "heading",
+    type: type,
     properties: {
       title: [[""]],
     },
     content: [],
     format: {},
     parent: "",
+    drafts: [],
+    key: uuid(),
   };
+};
+
+export const createEmptyBlock = (type: BlockType) => {
+  switch (type) {
+    case "page":
+      return createEmptyPage();
+    case "text":
+      return createEmptyText();
+    case "heading-1":
+      return createEmptyHeading("heading-1");
+    case "heading-2":
+      return createEmptyHeading("heading-2");
+    case "heading-3":
+      return createEmptyHeading("heading-3");
+  }
 };

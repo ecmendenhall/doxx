@@ -76,6 +76,7 @@ type PagesLoadedState = {
 type PagesState = PagesPendingState | PagesFailedState | PagesLoadedState;
 
 type ActivePageState = string;
+type ActiveBlockState = string;
 
 export interface State {
   provider: ProviderState;
@@ -84,6 +85,7 @@ export interface State {
   pages: PagesState;
   blocks: BlocksState;
   activePage: ActivePageState;
+  activeBlock: ActiveBlockState;
 }
 
 export type LoadProvider = { type: "provider loading" };
@@ -127,11 +129,17 @@ export type SaveBlock = { type: "save block"; block: Block };
 export type SaveDraftBlock = { type: "save draft block"; block: Block };
 export type SetBlock = { type: "set block"; block: Block };
 export type SetDraftBlock = { type: "set draft block"; block: Block };
+export type SaveDraftBlockComplete = {
+  type: "save draft block complete";
+  block: Block;
+  savedBlock: Block;
+};
 export type SaveBlockComplete = {
   type: "save block complete";
   block: Block;
   savedBlock: Block;
 };
+export type SetActiveBlock = { type: "set active block"; blockId: string };
 
 export type BlocksAction =
   | LoadBlocks
@@ -142,7 +150,9 @@ export type BlocksAction =
   | SaveBlock
   | SetDraftBlock
   | SaveDraftBlock
-  | SaveBlockComplete;
+  | SaveDraftBlockComplete
+  | SaveBlockComplete
+  | SetActiveBlock;
 
 export type LoadPages = { type: "pages loading" };
 export type LoadPagesFailed = { type: "pages failed"; error: Error };
@@ -319,7 +329,7 @@ export const reducer = (state: State, action: Action): State => {
           }),
         },
       };
-    case "save block complete":
+    case "save draft block complete":
       const newDrafts = new Map(state.blocks.drafts);
       newDrafts.delete(action.block.id);
       return {
@@ -328,9 +338,20 @@ export const reducer = (state: State, action: Action): State => {
           ...state.blocks,
           blocks: state.blocks.blocks.set(action.savedBlock.id, {
             ...action.savedBlock,
-            saveState: "saved",
+            key: action.block.key,
           }),
           drafts: newDrafts,
+        },
+      };
+    case "save block complete":
+      return {
+        ...state,
+        blocks: {
+          ...state.blocks,
+          blocks: state.blocks.blocks.set(action.savedBlock.id, {
+            ...action.savedBlock,
+            saveState: "saved",
+          }),
         },
       };
     case "save page complete":
@@ -350,6 +371,11 @@ export const reducer = (state: State, action: Action): State => {
         ...state,
         activePage: action.pageId,
       };
+    case "set active block":
+      return {
+        ...state,
+        activeBlock: action.blockId,
+      };
     default:
       return state;
   }
@@ -366,4 +392,5 @@ export const initialState: State = {
     blocks: new Map<string, Block>(),
     drafts: new Map<string, Block>(),
   },
+  activeBlock: "",
 };

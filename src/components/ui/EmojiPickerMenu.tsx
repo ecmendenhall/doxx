@@ -4,11 +4,15 @@ import { BaseEmoji } from "emoji-mart";
 interface EmojiPickerProps {
   active: boolean;
   onSelect: (emoji: string) => void;
+  onBlur: () => void;
 }
 
-const EmojiPickerMenu = ({ active, onSelect }: EmojiPickerProps) => {
+const EmojiPickerMenu = ({ active, onSelect, onBlur }: EmojiPickerProps) => {
   return (
-    <div className={`absolute shadow-md ${active ? "block" : "hidden"}`}>
+    <div
+      onBlur={onBlur}
+      className={`absolute z-10 shadow-lg ${active ? "block" : "hidden"}`}
+    >
       <Picker
         onSelect={(emoji: BaseEmoji) => {
           onSelect(emoji.native);

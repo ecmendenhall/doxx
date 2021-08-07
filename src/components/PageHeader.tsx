@@ -18,7 +18,6 @@ const PageHeader = () => {
         <div className="text-xl">
           <SelectEmoji page={page} />
           <EditPageTitle page={page} />
-          <AddBlock />
         </div>
       )}
     </div>

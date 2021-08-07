@@ -5,7 +5,7 @@ import CreatePage from "../components/CreatePage";
 import PagesList from "../components/PagesList";
 import Sidebar from "../components/ui/Sidebar";
 import StatusPanel from "../components/StatusPanel";
-import Editor from "../components/ui/Editor";
+import PageContent from "../components/ui/Editor";
 import useApp from "../hooks/useApp";
 import { useEffect } from "react";
 import Menu from "../components/ui/Menu";
@@ -36,7 +36,7 @@ function Home() {
           <CopyLink />
           <ConnectWallet />
         </Menu>
-        <Editor />
+        <PageContent />
         <StatusPanel />
       </Content>
     </Grid>

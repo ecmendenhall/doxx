@@ -1,8 +1,8 @@
-import { Block } from "../blocks";
+import { Heading as HeadingBlock } from "../blocks";
 import EditHeading from "../components/EditHeading";
 
 interface Props {
-  block: Block;
+  block: HeadingBlock;
 }
 
 const Heading = ({ block }: Props) => {

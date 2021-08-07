@@ -3,7 +3,7 @@ import Grid from "../components/ui/Grid";
 import PagesList from "../components/PagesList";
 import Sidebar from "../components/ui/Sidebar";
 import StatusPanel from "../components/StatusPanel";
-import Editor from "../components/ui/Editor";
+import PageContent from "../components/ui/Editor";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useApp from "../hooks/useApp";
@@ -49,9 +49,9 @@ function Page() {
         {loadingState === "failed" ? (
           <NotFound />
         ) : (
-          <Editor>
+          <PageContent>
             <PageHeader />
-          </Editor>
+          </PageContent>
         )}
         <StatusPanel />
       </Content>

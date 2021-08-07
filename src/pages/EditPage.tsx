@@ -2,17 +2,17 @@ import Content from "../components/ui/Content";
 import Grid from "../components/ui/Grid";
 import PagesList from "../components/PagesList";
 import Sidebar from "../components/ui/Sidebar";
-import Connections from "../components/StatusPanel";
-import Editor from "../components/ui/Editor";
+import StatusPanel from "../components/StatusPanel";
+import Editor from "../components/Editor";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useApp from "../hooks/useApp";
 import NotFound from "../components/ui/NotFound";
-import PageHeader from "../components/PageHeader";
-import Blocks from "../components/Blocks";
 import Menu from "../components/ui/Menu";
 import CopyLink from "../components/CopyLink";
 import ConnectWallet from "../components/ConnectButton";
+import CreatePage from "../components/CreatePage";
+import PageContent from "../components/ui/Editor";
 
 interface Params {
   id: string;
@@ -59,23 +59,23 @@ function Page() {
     <Grid>
       <Sidebar>
         <PagesList />
+        <CreatePage />
       </Sidebar>
       <Content>
         {loadingState === "failed" ? (
           <NotFound />
         ) : (
-          <div>
+          <div className="col-span-3">
             <Menu>
               <CopyLink />
               <ConnectWallet />
             </Menu>
-            <Editor>
-              <PageHeader />
-              <Blocks />
-            </Editor>
+            <PageContent>
+              <Editor />
+            </PageContent>
           </div>
         )}
-        <Connections />
+        <StatusPanel />
       </Content>
     </Grid>
   );

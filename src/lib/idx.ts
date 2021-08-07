@@ -1,12 +1,13 @@
 import CeramicClient from "@ceramicnetwork/http-client";
 import { TileDocument } from "@ceramicnetwork/stream-tile";
 import { IDX } from "@ceramicstudio/idx";
+import { v4 as uuid } from "uuid";
 import { Block, BlockIndex, Page, PageIndex } from "../blocks";
 import { schemas } from "../config/deployedSchemas.json";
 import ceramic from "./ceramic";
 
-export type BlockParams = Omit<Block, "id" | "saveState">;
-export type PageParams = Omit<Page, "id" | "saveState">;
+export type BlockParams = Omit<Block, "id" | "saveState" | "drafts" | "key">;
+export type PageParams = Omit<Page, "id" | "saveState" | "drafts" | "key">;
 
 const loadBlocks = async (idx: IDX, ceramicClient: CeramicClient) => {
   const blockIdsResponse = await idx.get<{ blocks: Array<string> }>("blocks");
@@ -14,7 +15,7 @@ const loadBlocks = async (idx: IDX, ceramicClient: CeramicClient) => {
   const blocksResponse = await ceramic.readBlocks(ceramicClient, blockIds);
   let blocks = new Map<string, Block>();
   blocksResponse.forEach((block) => {
-    blocks.set(block.id, { ...block, saveState: "saved" });
+    blocks.set(block.id, block);
   });
   console.log(blocks);
   return blocks;

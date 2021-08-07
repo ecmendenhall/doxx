@@ -1,4 +1,4 @@
-import { Page } from "../blocks";
+import { Block, Page } from "../blocks";
 import useApp from "../hooks/useApp";
 import PageListItem from "./ui/PageListItem";
 
@@ -11,7 +11,7 @@ const PagesList = () => {
     },
   } = useApp();
 
-  const isPage = (item: Page | undefined): item is Page => {
+  const isPage = (item: Block | undefined): item is Block => {
     return !!item;
   };
 
@@ -24,7 +24,7 @@ const PagesList = () => {
   return (
     <ul>
       {pageBlocks.map((page) => (
-        <PageListItem page={page} active={activePage === page.id} />
+        <PageListItem page={page as Page} active={activePage === page.id} />
       ))}
     </ul>
   );

@@ -5,7 +5,7 @@ interface Props {
 const Grid = ({ children }: Props) => {
   return (
     <div className="container">
-      <div className="h-screen w-screen grid grid-cols-6">{children}</div>
+      <div className="h-screen w-screen grid grid-cols-6 flex">{children}</div>
     </div>
   );
 };

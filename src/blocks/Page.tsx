@@ -1,8 +1,8 @@
-import { Block } from "../blocks";
+import { Page as PageBlock } from "../blocks";
 import PageLink from "../components/ui/PageLink";
 
 interface Props {
-  block: Block;
+  block: PageBlock;
 }
 
 const Page = ({ block }: Props) => {
