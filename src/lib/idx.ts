@@ -4,6 +4,7 @@ import { IDX } from "@ceramicstudio/idx";
 import { Block, BlockIndex, Page, PageIndex } from "../blocks";
 import { schemas } from "../config/deployedSchemas.json";
 import ceramic from "./ceramic";
+import { BasicProfile } from "@ceramicstudio/idx-constants";
 
 export type BlockParams = Omit<
   Block,
@@ -84,7 +85,7 @@ const updatePage = async (
 };
 
 const loadProfile = async (idx: IDX, caip10Id: string) => {
-  return await idx.get("basicProfile", caip10Id);
+  return await idx.get<BasicProfile>("basicProfile", caip10Id);
 };
 
 const exp = {
