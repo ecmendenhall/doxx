@@ -20,7 +20,6 @@ const EditHeading = ({ block }: Props) => {
 
   useEffect(() => {
     if (block.key === activeBlock) {
-      console.log("refocusing");
       if (ref.current) {
         const range = document.createRange();
         const selection = window.getSelection();
@@ -33,11 +32,10 @@ const EditHeading = ({ block }: Props) => {
         ref.current.focus();
       }
     }
-  }, []);
+  }, [block, activeBlock]);
 
   const handleChange = useRefCallback(
     (evt) => {
-      console.log(block.saveState);
       const updatedBlock: Block = {
         ...block,
         properties: {

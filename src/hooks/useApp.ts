@@ -165,9 +165,6 @@ function useApp() {
   const saveBlock = useCallback(
     async (ceramic: CeramicClient, block: Block) => {
       dispatch({ type: "save block", block: block });
-      console.log("saving...");
-      await new Promise((r) => setTimeout(r, 2000));
-      console.log(block);
       const { id, saveState, drafts, ...blockParams } = block;
       await idx.updateBlock(ceramic, blockParams, id);
       dispatch({

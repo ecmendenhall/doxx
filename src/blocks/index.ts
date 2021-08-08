@@ -1,5 +1,4 @@
 import { v4 as uuid } from "uuid";
-import Heading from "../components/ui/Heading";
 export type SaveState = "new" | "changed" | "saving" | "saved";
 export type BlockType = "page" | "text" | HeadingType;
 export type HeadingType = "heading-1" | "heading-2" | "heading-3";

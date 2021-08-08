@@ -3,7 +3,7 @@ import { Page } from "../../blocks";
 interface Props {
   page: Page;
   hover: boolean;
-  onClick: () => void;
+  onClick?: () => void;
 }
 
 export const EmojiHero = ({ page, hover, onClick }: Props) => {

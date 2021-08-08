@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { BlockType, createEmptyBlock } from "../blocks";
 import useActivePage from "../hooks/useActivePage";
 import useApp from "../hooks/useApp";

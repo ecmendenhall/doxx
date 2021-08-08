@@ -24,7 +24,7 @@ interface Props {
   block: Block;
 }
 
-const createPlugins = () => {
+export const createPlugins = () => {
   const prismPlugin = createPrismPlugin({
     prism: Prism,
   });
@@ -47,8 +47,8 @@ const getInitialState = (
 ) => {
   const editorState = editorStates.get(key);
   if (editorState) {
-    EditorState.moveSelectionToEnd(editorState);
-    return EditorState.forceSelection(editorState, editorState.getSelection());
+    return editorState;
+    //return EditorState.moveFocusToEnd(editorState);
   } else {
     const content = properties.title[0][0];
     if (content === "") {
@@ -61,7 +61,7 @@ const getInitialState = (
 
 const EditText = ({ block }: Props) => {
   const {
-    state: { ceramic, activeBlock, editorStates },
+    state: { ceramic, editorStates },
     setBlock,
     saveBlock,
     setActiveBlock,
@@ -76,13 +76,11 @@ const EditText = ({ block }: Props) => {
   const handleChange = useCallback(
     (newEditorState: EditorState) => {
       if (newEditorState !== editorState) {
-        console.log(block.saveState);
         setEditorState(block.key, newEditorState);
         setEditorState2(newEditorState);
         if (
           newEditorState.getCurrentContent() !== editorState.getCurrentContent()
         ) {
-          console.log("setting state to changed");
           const updatedBlock: Block = {
             ...block,
             type: "text",
@@ -112,9 +110,7 @@ const EditText = ({ block }: Props) => {
       block.saveState === "changed" &&
       block.id.startsWith("ceramic://")
     ) {
-      console.log("saving block");
       saveBlock(ceramic.ceramic, block);
-      console.log(block.saveState);
     }
   }, [ceramic, block, saveBlock]);
 
@@ -122,11 +118,15 @@ const EditText = ({ block }: Props) => {
     setActiveBlock(block.key);
   }, [block, setActiveBlock]);
 
+  const handleClick = useCallback(() => {
+    ref && ref.current?.focus();
+  }, [ref]);
+
   return (
     <Text>
-      <div className="flex flex-row">
+      <div className="flex flex-row" onClick={handleClick}>
         <SaveSpinner block={block} />
-        <div>
+        <div className="ml-2">
           <Editor
             ref={ref}
             placeholder={"Text"}

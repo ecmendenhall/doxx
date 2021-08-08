@@ -2,12 +2,16 @@ import AddBlock from "./AddBlock";
 import Blocks from "./Blocks";
 import PageHeader from "./PageHeader";
 
-const Editor = () => {
+interface Props {
+  enabled: boolean;
+}
+
+const Editor = ({ enabled }: Props) => {
   return (
     <div>
-      <PageHeader />
-      <Blocks />
-      <AddBlock />
+      <PageHeader enabled={enabled} />
+      <Blocks enabled={enabled} />
+      {enabled && <AddBlock />}
     </div>
   );
 };

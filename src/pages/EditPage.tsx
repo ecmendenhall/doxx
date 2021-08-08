@@ -71,7 +71,7 @@ function Page() {
               <ConnectWallet />
             </Menu>
             <PageContent>
-              <Editor />
+              <Editor enabled />
             </PageContent>
           </div>
         )}
