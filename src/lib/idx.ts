@@ -6,8 +6,14 @@ import { Block, BlockIndex, Page, PageIndex } from "../blocks";
 import { schemas } from "../config/deployedSchemas.json";
 import ceramic from "./ceramic";
 
-export type BlockParams = Omit<Block, "id" | "saveState" | "drafts" | "key">;
-export type PageParams = Omit<Page, "id" | "saveState" | "drafts" | "key">;
+export type BlockParams = Omit<
+  Block,
+  "id" | "saveState" | "drafts" | "key" | "editorState"
+>;
+export type PageParams = Omit<
+  Page,
+  "id" | "saveState" | "drafts" | "key" | "editorState"
+>;
 
 const loadBlocks = async (idx: IDX, ceramicClient: CeramicClient) => {
   const blockIdsResponse = await idx.get<{ blocks: Array<string> }>("blocks");
@@ -32,6 +38,7 @@ const createBlock = async (
   ceramic: CeramicClient,
   block: BlockParams
 ) => {
+  console.log(block as BlockParams);
   const newBlock = await TileDocument.create(ceramic, block, {
     controllers: [idx.id],
     schema: schemas.Block,

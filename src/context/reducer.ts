@@ -1,6 +1,7 @@
 import CeramicClient from "@ceramicnetwork/http-client";
 import { IDX } from "@ceramicstudio/idx";
 import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
+import { EditorState } from "draft-js";
 import { Block } from "../blocks";
 
 type PendingStatus = "pending" | "loading";
@@ -78,6 +79,8 @@ type PagesState = PagesPendingState | PagesFailedState | PagesLoadedState;
 type ActivePageState = string;
 type ActiveBlockState = string;
 
+type EditorStates = Map<string, EditorState>;
+
 export interface State {
   provider: ProviderState;
   ceramic: CeramicState;
@@ -86,6 +89,7 @@ export interface State {
   blocks: BlocksState;
   activePage: ActivePageState;
   activeBlock: ActiveBlockState;
+  editorStates: EditorStates;
 }
 
 export type LoadProvider = { type: "provider loading" };
@@ -173,12 +177,19 @@ export type PagesAction =
   | SavePageComplete
   | SetActivePage;
 
+export type EditorStateAction = {
+  type: "set editor state";
+  key: string;
+  editorState: EditorState;
+};
+
 export type Action =
   | ProviderAction
   | CeramicAction
   | IDXAuthAction
   | BlocksAction
-  | PagesAction;
+  | PagesAction
+  | EditorStateAction;
 
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -376,6 +387,11 @@ export const reducer = (state: State, action: Action): State => {
         ...state,
         activeBlock: action.blockId,
       };
+    case "set editor state":
+      return {
+        ...state,
+        editorStates: state.editorStates.set(action.key, action.editorState),
+      };
     default:
       return state;
   }
@@ -393,4 +409,5 @@ export const initialState: State = {
     drafts: new Map<string, Block>(),
   },
   activeBlock: "",
+  editorStates: new Map<string, EditorState>(),
 };

@@ -4,7 +4,7 @@ interface Props {
 
 const Text = ({ children }: Props) => {
   return (
-    <div>
+    <div className="leading-8">
       <p>{children}</p>
     </div>
   );
