@@ -36,7 +36,7 @@ function Page() {
           console.log(block.controllers);
           const accounts = await idx.loadAccounts(
             idxClient,
-            "did:3:kjzl6cwe1jw14aalj2ctglxl8xwof3egezj9wpr5vaep32pohkro4v0k1kaz56r"
+            block.controllers[0]
           );
           console.log(accounts);
           const profile = await idx.loadProfile(

@@ -29,7 +29,7 @@ const loadClient = async () => {
 };
 
 const getReadOnlyIDX = () => {
-  let ceramic = new CeramicClient("https://gateway.ceramic.network");
+  let ceramic = new CeramicClient("https://gateway-clay.ceramic.network");
   return new IDX({ ceramic, aliases: definitions });
 };
 
