@@ -11,7 +11,7 @@ const CopyLink = () => {
 
   const copy = async (page: Page) => {
     const path = formatId(page.id);
-    const url = `http://localhost:3000/pages/${path}`;
+    const url = `https://${document.location.host}/pages/${path}`;
     await navigator.clipboard.writeText(url);
     setCopyStatus("copied");
     setTimeout(() => {

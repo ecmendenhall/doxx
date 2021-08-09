@@ -6,9 +6,7 @@ import PageIndexSchema from "../src/schemas/eth.doxx.PageIndex";
 
 const run = async () => {
   const client = await ceramic.loadClient();
-  await ceramic.authenticateApp(
-    "90c5bbfa6066cc2ef348941c7a08f15763aad587dc433fe96b9eb8ac56881924"
-  );
+  await ceramic.authenticateApp(process.env.CERAMIC_SECRET_KEY);
   const blockSchema = await ceramic.publishSchema(client, BlockSchema);
   const blockIndexSchema = await ceramic.publishSchema(
     client,

@@ -18,7 +18,7 @@ const Profile = ({ profile, name, address }: Props) => {
           <img
             className="object-cover object-center w-screen h-72 shadow-sm"
             src={
-              "http://localhost:8081/ipfs/QmZD41nhZgcN7WTodubWyM1DLQkSCEF5FsZX1izXBxxgAn"
+              "https://ipfs.io/ipfs/QmZD41nhZgcN7WTodubWyM1DLQkSCEF5FsZX1izXBxxgAn"
             }
           />
         )}
