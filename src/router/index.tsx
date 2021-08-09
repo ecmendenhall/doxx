@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { HashRouter, Switch, Route } from "react-router-dom";
 import EditPage from "../pages/EditPage";
 import EditProfile from "../pages/EditProfile";
 import Home from "../pages/Home";
@@ -8,7 +8,7 @@ import ViewProfile from "../pages/ViewProfile";
 
 const Routes = () => {
   return (
-    <Router>
+    <HashRouter>
       <Switch>
         <Route exact path="/edit/:id">
           <EditPage />
@@ -29,7 +29,7 @@ const Routes = () => {
           <NotFound />
         </Route>
       </Switch>
-    </Router>
+    </HashRouter>
   );
 };
 
