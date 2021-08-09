@@ -1,0 +1,13 @@
+diff --git a/node_modules/ipfs-http-client/src/index.js b/node_modules/ipfs-http-client/src/index.js
+index 521aaa7..a2e90b4 100644
+--- a/node_modules/ipfs-http-client/src/index.js
++++ b/node_modules/ipfs-http-client/src/index.js
+@@ -42,7 +42,7 @@ function create (options = {}) {
+     loadBase: options.ipld && options.ipld.loadBase
+   })
+   const codecs = new Multicodecs({
+-    codecs: [dagPb, dagCbor, raw, json, id].concat(options.ipld?.codecs || []),
++    codecs: [dagPb, dagCbor, raw, json, id].concat(options.ipld && options.ipld.codecs || []),
+     loadCodec: options.ipld && options.ipld.loadCodec
+   })
+   const hashers = new Multihashes({

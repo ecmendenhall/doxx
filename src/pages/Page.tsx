@@ -5,6 +5,7 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useApp from "../hooks/useApp";
 import ceramic from "../lib/ceramic";
+import idx from "../lib/idx";
 import NotFound from "../components/ui/NotFound";
 import FullPage from "../components/ui/FullPage";
 import Menu from "../components/ui/Menu";
@@ -14,6 +15,8 @@ import Editor from "../components/Editor";
 interface Params {
   id: string;
 }
+
+const idxClient = ceramic.getReadOnlyIDX();
 
 function Page() {
   let { id } = useParams<Params>();
@@ -30,6 +33,17 @@ function Page() {
         setLoadingState("loading");
         try {
           const block = await ceramic.readBlock(state.ceramic.ceramic, id);
+          console.log(block.controllers);
+          const accounts = await idx.loadAccounts(
+            idxClient,
+            block.controllers[0]
+          );
+          console.log(accounts);
+          const profile = await idx.loadProfile(
+            idxClient,
+            block.controllers[0]
+          );
+          console.log(profile);
           const children = await ceramic.readBlocks(
             state.ceramic.ceramic,
             block.content

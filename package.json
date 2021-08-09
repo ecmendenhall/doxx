@@ -42,10 +42,13 @@
     "emoji-mart": "^3.0.1",
     "ethers": "^5.4.4",
     "html-to-text": "^8.0.0",
+    "ipfs-core": "^0.9.1",
     "key-did-provider-ed25519": "^1.1.0",
     "key-did-resolver": "^1.2.1",
     "lodash.flattendeep": "^4.4.0",
+    "patch-package": "^6.4.7",
     "postcss": "^7",
+    "postinstall-postinstall": "^2.1.0",
     "prismjs": "^1.24.1",
     "react": "^17.0.2",
     "react-contenteditable": "^3.3.5",
@@ -69,7 +72,8 @@
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
-    "deploy-definitions": "ts-node --project ./scripts/node.tsconfig.json ./scripts/deployDefinitions.ts"
+    "deploy-definitions": "ts-node --project ./scripts/node.tsconfig.json ./scripts/deployDefinitions.ts",
+    "postinstall": "patch-package"
   },
   "eslintConfig": {
     "extends": [

@@ -17,6 +17,7 @@ export interface Page {
   saveState: SaveState;
   drafts: string[];
   key: string;
+  controllers: string[];
 }
 
 export interface Text {
@@ -31,6 +32,7 @@ export interface Text {
   saveState: SaveState;
   drafts: string[];
   key: string;
+  controllers: string[];
 }
 
 export interface Heading {
@@ -45,6 +47,7 @@ export interface Heading {
   saveState: SaveState;
   drafts: string[];
   key: string;
+  controllers: string[];
 }
 
 export interface BlockIndex {
@@ -72,6 +75,7 @@ export const createEmptyPage = (): Page => {
     parent: "",
     drafts: [],
     key: uuid(),
+    controllers: [],
   };
 };
 
@@ -88,6 +92,7 @@ export const createEmptyText = (): Text => {
     parent: "",
     drafts: [],
     key: uuid(),
+    controllers: [],
   };
 };
 
@@ -104,6 +109,7 @@ export const createEmptyHeading = (type: HeadingType): Heading => {
     parent: "",
     drafts: [],
     key: uuid(),
+    controllers: [],
   };
 };
 

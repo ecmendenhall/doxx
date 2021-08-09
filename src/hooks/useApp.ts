@@ -165,7 +165,7 @@ function useApp() {
   const saveBlock = useCallback(
     async (ceramic: CeramicClient, block: Block) => {
       dispatch({ type: "save block", block: block });
-      const { id, saveState, drafts, ...blockParams } = block;
+      const { id, saveState, drafts, controllers, ...blockParams } = block;
       await idx.updateBlock(ceramic, blockParams, id);
       dispatch({
         type: "save block complete",

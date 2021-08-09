@@ -2,6 +2,7 @@ import { BasicProfile } from "@ceramicstudio/idx-constants";
 import github from "super-tiny-icons/images/svg/github.svg";
 import twitter from "super-tiny-icons/images/svg/twitter.svg";
 import discord from "super-tiny-icons/images/svg/discord.svg";
+import IPFSProvider from "../IPFSImage";
 
 interface Props {
   profile: BasicProfile;
@@ -13,11 +14,11 @@ const Profile = ({ profile, name, address }: Props) => {
   return (
     <div className="col-span-3">
       <div className="absolute bg-gradient-to-tr from-blue-200 via-purple-200 to-purple-50 w-screen h-72">
-        {false && (
+        {true && (
           <img
             className="object-cover object-center w-screen h-72 shadow-sm"
             src={
-              "https://ipfs.infura.io/ipfs/QmZD41nhZgcN7WTodubWyM1DLQkSCEF5FsZX1izXBxxgAn"
+              "http://localhost:8081/ipfs/QmZD41nhZgcN7WTodubWyM1DLQkSCEF5FsZX1izXBxxgAn"
             }
           />
         )}

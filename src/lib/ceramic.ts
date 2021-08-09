@@ -80,6 +80,7 @@ const readBlock = async (
   blockId: string
 ): Promise<Block> => {
   const blockResponse = await ceramic.loadStream<TileDocument>(blockId);
+  console.log(blockResponse);
   const content: BlockParams = blockResponse.content as BlockParams;
   return {
     ...content,
@@ -87,6 +88,7 @@ const readBlock = async (
     saveState: "saved",
     key: uuid(),
     drafts: [],
+    controllers: blockResponse.controllers,
   };
 };
 
@@ -101,14 +103,15 @@ const readBlocks = async (
   let blocks = [];
   for (const key in blocksResponse) {
     const id = `ceramic://${key}`;
-    const content = (blocksResponse[key] as TileDocument)
-      .content as BlockParams;
+    const doc = blocksResponse[key] as TileDocument;
+    const content = doc.content as BlockParams;
     blocks.push({
       ...content,
       id: id,
       saveState: "saved",
       key: uuid(),
       drafts: [],
+      controllers: doc.controllers,
     } as Block);
   }
   return blocks;

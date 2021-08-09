@@ -4,15 +4,15 @@ import { IDX } from "@ceramicstudio/idx";
 import { Block, BlockIndex, Page, PageIndex } from "../blocks";
 import { schemas } from "../config/deployedSchemas.json";
 import ceramic from "./ceramic";
-import { BasicProfile } from "@ceramicstudio/idx-constants";
+import { BasicProfile, CryptoAccounts } from "@ceramicstudio/idx-constants";
 
 export type BlockParams = Omit<
   Block,
-  "id" | "saveState" | "drafts" | "key" | "editorState"
+  "id" | "saveState" | "drafts" | "key" | "editorState" | "controllers"
 >;
 export type PageParams = Omit<
   Page,
-  "id" | "saveState" | "drafts" | "key" | "editorState"
+  "id" | "saveState" | "drafts" | "key" | "editorState" | "controllers"
 >;
 
 const loadBlocks = async (idx: IDX, ceramicClient: CeramicClient) => {
@@ -58,6 +58,7 @@ const updateBlock = async (
   block: BlockParams,
   id: string
 ) => {
+  console.log(ceramic.did);
   const savedBlock = await ceramic.loadStream<TileDocument>(id);
   await savedBlock.update(block);
 };
@@ -88,6 +89,10 @@ const loadProfile = async (idx: IDX, caip10Id: string) => {
   return await idx.get<BasicProfile>("basicProfile", caip10Id);
 };
 
+const loadAccounts = async (idx: IDX, did: string) => {
+  return await idx.get<CryptoAccounts>("cryptoAccounts", did);
+};
+
 const exp = {
   loadPages,
   loadBlocks,
@@ -96,6 +101,7 @@ const exp = {
   createBlock,
   updateBlock,
   loadProfile,
+  loadAccounts,
 };
 
 export default exp;
