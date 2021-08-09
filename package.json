@@ -43,6 +43,7 @@
     "ethers": "^5.4.4",
     "html-to-text": "^8.0.0",
     "ipfs-core": "^0.9.1",
+    "ipfs-react-router": "^0.2.2",
     "key-did-provider-ed25519": "^1.1.0",
     "key-did-resolver": "^1.2.1",
     "lodash.flattendeep": "^4.4.0",
