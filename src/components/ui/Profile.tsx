@@ -2,7 +2,6 @@ import { BasicProfile } from "@ceramicstudio/idx-constants";
 import github from "super-tiny-icons/images/svg/github.svg";
 import twitter from "super-tiny-icons/images/svg/twitter.svg";
 import discord from "super-tiny-icons/images/svg/discord.svg";
-import IPFSProvider from "../IPFSImage";
 
 interface Props {
   profile: BasicProfile;

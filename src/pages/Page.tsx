@@ -11,6 +11,11 @@ import FullPage from "../components/ui/FullPage";
 import Menu from "../components/ui/Menu";
 import { Link } from "react-router-dom";
 import Editor from "../components/Editor";
+import { CryptoAccounts } from "@ceramicstudio/idx-constants";
+import { utils } from "ethers";
+import { Web3Provider } from "@ethersproject/providers";
+import { formatAddress } from "../components/ui";
+import Author from "../components/ui/Author";
 
 interface Params {
   id: string;
@@ -18,18 +23,40 @@ interface Params {
 
 const idxClient = ceramic.getReadOnlyIDX();
 
+const getAddressFromAccounts = (accounts: CryptoAccounts) => {
+  const [caip10, _] = Object.entries(accounts).filter(([caip10, _]) => {
+    return caip10.endsWith("@eip155:1");
+  })[0];
+  return caip10.split("@eip155:1")[0];
+};
+
+const getNameFromAddress = async (provider: Web3Provider, address: string) => {
+  return await provider.lookupAddress(utils.getAddress(address));
+};
+
+interface Author {
+  name?: string;
+  address?: string;
+}
+
 function Page() {
   let { id } = useParams<Params>();
-  let { state, loadCeramic, setBlock, setActivePage } = useApp();
+  let { state, loadProvider, loadCeramic, setBlock, setActivePage } = useApp();
   let [loadingState, setLoadingState] = useState("pending");
+  let [author, setAuthor] = useState<Author>({});
 
   useEffect(() => {
+    loadProvider();
     loadCeramic();
   }, [loadCeramic]);
 
   useEffect(() => {
     const loadPage = async () => {
-      if (state.ceramic.status === "done" && loadingState === "pending") {
+      if (
+        state.ceramic.status === "done" &&
+        state.provider.status === "done" &&
+        loadingState === "pending"
+      ) {
         setLoadingState("loading");
         try {
           const block = await ceramic.readBlock(state.ceramic.ceramic, id);
@@ -39,6 +66,14 @@ function Page() {
             block.controllers[0]
           );
           console.log(accounts);
+          if (accounts) {
+            const address = getAddressFromAccounts(accounts);
+            const name = await getNameFromAddress(
+              state.provider.provider,
+              address
+            );
+            setAuthor({ name, address });
+          }
           const profile = await idx.loadProfile(
             idxClient,
             block.controllers[0]
@@ -59,7 +94,7 @@ function Page() {
       }
     };
     loadPage();
-  }, [state.ceramic, id, setBlock, setActivePage]);
+  }, [state.ceramic, state.provider, id, setBlock, setActivePage]);
 
   return (
     <Grid>
@@ -68,9 +103,12 @@ function Page() {
           <NotFound />
         ) : (
           <div>
+            <div className="fixed top-8 left-10 space-x-2 z-50">
+              <Author {...author} />
+            </div>
             <Menu>
               <Link to="/">
-                <h1 className="font-script text-purple-800 text-2xl">
+                <h1 className="font-script tracking-tighter text-purple-800 text-2xl inline">
                   📑 Doxx
                 </h1>
               </Link>

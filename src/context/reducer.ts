@@ -3,6 +3,7 @@ import { IDX } from "@ceramicstudio/idx";
 import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
 import { EditorState } from "draft-js";
 import { Block } from "../blocks";
+import { BasicProfile } from "@ceramicstudio/idx-constants";
 
 type PendingStatus = "pending" | "loading";
 
@@ -81,6 +82,15 @@ type ActiveBlockState = string;
 
 type EditorStates = Map<string, EditorState>;
 
+type ProfilePendingState = { status: PendingStatus };
+type ProfileLoadedState = { status: "done"; profile: BasicProfile | null };
+type ProfileFailedState = { status: "failed"; error: Error };
+
+type ProfileState =
+  | ProfilePendingState
+  | ProfileLoadedState
+  | ProfileFailedState;
+
 export interface State {
   provider: ProviderState;
   ceramic: CeramicState;
@@ -90,6 +100,7 @@ export interface State {
   activePage: ActivePageState;
   activeBlock: ActiveBlockState;
   editorStates: EditorStates;
+  profile: ProfileState;
 }
 
 export type LoadProvider = { type: "provider loading" };
@@ -183,13 +194,22 @@ export type EditorStateAction = {
   editorState: EditorState;
 };
 
+export type LoadProfile = { type: "profile loading" };
+export type LoadProfileFailed = { type: "profile failed"; error: Error };
+export type SetProfile = {
+  type: "profile loaded";
+  profile: BasicProfile | null;
+};
+export type ProfileAction = LoadProfile | LoadProfileFailed | SetProfile;
+
 export type Action =
   | ProviderAction
   | CeramicAction
   | IDXAuthAction
   | BlocksAction
   | PagesAction
-  | EditorStateAction;
+  | EditorStateAction
+  | ProfileAction;
 
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
@@ -392,6 +412,27 @@ export const reducer = (state: State, action: Action): State => {
         ...state,
         editorStates: state.editorStates.set(action.key, action.editorState),
       };
+    case "profile loading":
+      return {
+        ...state,
+        profile: { status: "loading" },
+      };
+    case "profile loaded":
+      return {
+        ...state,
+        profile: {
+          status: "done",
+          profile: action.profile,
+        },
+      };
+    case "profile failed":
+      return {
+        ...state,
+        profile: {
+          status: "failed",
+          error: action.error,
+        },
+      };
     default:
       return state;
   }
@@ -410,4 +451,5 @@ export const initialState: State = {
   },
   activeBlock: "",
   editorStates: new Map<string, EditorState>(),
+  profile: { status: "pending" },
 };

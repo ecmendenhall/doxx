@@ -10,6 +10,9 @@ const Routes = () => {
   return (
     <HashRouter>
       <Switch>
+        <Route exact path="/edit/profile">
+          <EditProfile />
+        </Route>
         <Route exact path="/edit/:id">
           <EditPage />
         </Route>
@@ -18,9 +21,6 @@ const Routes = () => {
         </Route>
         <Route exact path="/:id">
           <ViewProfile />
-        </Route>
-        <Route exact path="/profile">
-          <EditProfile />
         </Route>
         <Route exact path="/">
           <Home />
