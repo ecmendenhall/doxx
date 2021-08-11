@@ -14,7 +14,6 @@ import Editor from "../components/Editor";
 import { CryptoAccounts } from "@ceramicstudio/idx-constants";
 import { utils } from "ethers";
 import { Web3Provider } from "@ethersproject/providers";
-import { formatAddress } from "../components/ui";
 import Author from "../components/ui/Author";
 
 interface Params {
@@ -24,7 +23,7 @@ interface Params {
 const idxClient = ceramic.getReadOnlyIDX();
 
 const getAddressFromAccounts = (accounts: CryptoAccounts) => {
-  const [caip10, _] = Object.entries(accounts).filter(([caip10, _]) => {
+  const [caip10] = Object.entries(accounts).filter(([caip10, _]) => {
     return caip10.endsWith("@eip155:1");
   })[0];
   return caip10.split("@eip155:1")[0];
@@ -34,7 +33,7 @@ const getNameFromAddress = async (provider: Web3Provider, address: string) => {
   return await provider.lookupAddress(utils.getAddress(address));
 };
 
-interface Author {
+interface AuthorInfo {
   name?: string;
   address?: string;
 }
@@ -43,12 +42,12 @@ function Page() {
   let { id } = useParams<Params>();
   let { state, loadProvider, loadCeramic, setBlock, setActivePage } = useApp();
   let [loadingState, setLoadingState] = useState("pending");
-  let [author, setAuthor] = useState<Author>({});
+  let [author, setAuthor] = useState<AuthorInfo>({});
 
   useEffect(() => {
     loadProvider();
     loadCeramic();
-  }, [loadCeramic]);
+  }, [loadCeramic, loadProvider]);
 
   useEffect(() => {
     const loadPage = async () => {
@@ -94,7 +93,15 @@ function Page() {
       }
     };
     loadPage();
-  }, [state.ceramic, state.provider, id, setBlock, setActivePage]);
+  }, [
+    state.ceramic,
+    state.provider,
+    id,
+    loadingState,
+    setBlock,
+    setActivePage,
+    loadProvider,
+  ]);
 
   return (
     <Grid>

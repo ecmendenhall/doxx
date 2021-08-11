@@ -89,6 +89,10 @@ const loadProfile = async (idx: IDX, caip10Id: string) => {
   return await idx.get<BasicProfile>("basicProfile", caip10Id);
 };
 
+const saveProfile = async (idx: IDX, profile: BasicProfile) => {
+  return await idx.set("basicProfile", profile);
+};
+
 const loadAccounts = async (idx: IDX, did: string) => {
   return await idx.get<CryptoAccounts>("cryptoAccounts", did);
 };
@@ -107,6 +111,7 @@ const exp = {
   loadProfile,
   loadAccounts,
   caip10FromAddress,
+  saveProfile,
 };
 
 export default exp;
