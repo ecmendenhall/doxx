@@ -2,10 +2,11 @@ import { Page } from "../../blocks";
 
 interface Props {
   page: Page;
+  spinner: boolean;
 }
 
-const PageIcon = ({ page }: Props) => {
-  if (page.saveState === "saving") {
+const PageIcon = ({ page, spinner }: Props) => {
+  if (spinner && page.saveState === "saving") {
     return (
       <span className="text-xl mx-1">
         <svg

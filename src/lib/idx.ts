@@ -5,6 +5,7 @@ import { Block, BlockIndex, Page, PageIndex } from "../blocks";
 import { schemas } from "../config/deployedSchemas.json";
 import ceramic from "./ceramic";
 import { BasicProfile, CryptoAccounts } from "@ceramicstudio/idx-constants";
+import { StreamID } from "@ceramicnetwork/streamid";
 
 export type BlockParams = Omit<
   Block,
@@ -41,6 +42,7 @@ const createBlock = async (
     controllers: [idx.id],
     schema: schemas.Block,
   });
+  //await ceramic.pin.add(newBlock.id);
   const blockIndex = await idx.get<BlockIndex>("blocks");
   const blocks = blockIndex?.blocks ?? [];
   await idx.set("blocks", {
@@ -63,6 +65,18 @@ const updateBlock = async (
   await savedBlock.update(block);
 };
 
+const deleteBlock = async (idx: IDX, ceramic: CeramicClient, id: string) => {
+  const streamID = StreamID.fromString(id);
+  //await ceramic.pin.rm(streamID);
+
+  const blockIndex = await idx.get<BlockIndex>("blocks");
+  const blocks = blockIndex?.blocks ?? [];
+
+  return await idx.set("blocks", {
+    blocks: blocks.filter((blockId) => blockId !== id),
+  });
+};
+
 const createPage = async (
   idx: IDX,
   ceramic: CeramicClient,
@@ -83,6 +97,15 @@ const updatePage = async (
   id: string
 ) => {
   return await updateBlock(ceramic, page, id);
+};
+
+const deletePage = async (idx: IDX, ceramic: CeramicClient, id: string) => {
+  await deleteBlock(idx, ceramic, id);
+  const pageIndex = await idx.get<PageIndex>("pages");
+  const pages = pageIndex?.pages ?? [];
+  return await idx.set("pages", {
+    pages: pages.filter((pageId) => pageId !== id),
+  });
 };
 
 const loadProfile = async (idx: IDX, caip10Id: string) => {
@@ -112,6 +135,8 @@ const exp = {
   loadAccounts,
   caip10FromAddress,
   saveProfile,
+  deletePage,
+  deleteBlock,
 };
 
 export default exp;

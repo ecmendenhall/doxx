@@ -8,6 +8,7 @@ import idx from "../lib/idx";
 import CeramicClient from "@ceramicnetwork/http-client";
 import { Block, Page } from "../blocks";
 import { EditorState } from "draft-js";
+import { StreamID } from "@ceramicnetwork/streamid";
 
 function useApp() {
   const { state, dispatch } = useContext(AppContext);
@@ -226,6 +227,33 @@ function useApp() {
     [dispatch]
   );
 
+  const deletePage = useCallback(
+    async (idxClient: IDX, ceramicClient: CeramicClient, pageId: string) => {
+      try {
+        dispatch({ type: "delete block", blockId: pageId });
+        await idx.deletePage(idxClient, ceramicClient, pageId);
+        dispatch({ type: "delete block complete", blockId: pageId });
+        dispatch({ type: "delete page complete", pageId: pageId });
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    [dispatch]
+  );
+
+  const deleteBlock = useCallback(
+    async (idxClient: IDX, ceramicClient: CeramicClient, blockId: string) => {
+      try {
+        dispatch({ type: "delete block", blockId: blockId });
+        await idx.deleteBlock(idxClient, ceramicClient, blockId);
+        dispatch({ type: "delete block complete", blockId: blockId });
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    [dispatch]
+  );
+
   return {
     state,
     loadProvider,
@@ -242,6 +270,8 @@ function useApp() {
     setActiveBlock,
     setEditorState,
     loadProfile,
+    deletePage,
+    deleteBlock,
   };
 }
 

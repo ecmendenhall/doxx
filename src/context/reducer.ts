@@ -45,17 +45,20 @@ type BlocksPendingState = {
   status: PendingStatus;
   blocks: Map<string, Block>;
   drafts: Map<string, Block>;
+  deleting: string[];
 };
 type BlocksFailedState = {
   status: "failed";
   error: Error;
   blocks: Map<string, Block>;
   drafts: Map<string, Block>;
+  deleting: string[];
 };
 type BlocksLoadedState = {
   status: "done";
   blocks: Map<string, Block>;
   drafts: Map<string, Block>;
+  deleting: string[];
 };
 type BlocksState = BlocksPendingState | BlocksFailedState | BlocksLoadedState;
 
@@ -155,6 +158,11 @@ export type SaveBlockComplete = {
   savedBlock: Block;
 };
 export type SetActiveBlock = { type: "set active block"; blockId: string };
+export type DeleteBlock = { type: "delete block"; blockId: string };
+export type DeleteBlockComplete = {
+  type: "delete block complete";
+  blockId: string;
+};
 
 export type BlocksAction =
   | LoadBlocks
@@ -167,7 +175,9 @@ export type BlocksAction =
   | SaveDraftBlock
   | SaveDraftBlockComplete
   | SaveBlockComplete
-  | SetActiveBlock;
+  | SetActiveBlock
+  | DeleteBlock
+  | DeleteBlockComplete;
 
 export type LoadPages = { type: "pages loading" };
 export type LoadPagesFailed = { type: "pages failed"; error: Error };
@@ -179,6 +189,10 @@ export type SavePageComplete = {
   savedPageId: string;
 };
 export type SetActivePage = { type: "set active page"; pageId: string };
+export type DeletePageComplete = {
+  type: "delete page complete";
+  pageId: string;
+};
 
 export type PagesAction =
   | LoadPages
@@ -186,7 +200,8 @@ export type PagesAction =
   | SetPages
   | NewPage
   | SavePageComplete
-  | SetActivePage;
+  | SetActivePage
+  | DeletePageComplete;
 
 export type EditorStateAction = {
   type: "set editor state";
@@ -361,17 +376,18 @@ export const reducer = (state: State, action: Action): State => {
         },
       };
     case "save draft block complete":
-      const newDrafts = new Map(state.blocks.drafts);
-      newDrafts.delete(action.block.id);
+      const newDraftsBlockComplete = new Map(state.blocks.drafts);
+      newDraftsBlockComplete.delete(action.block.id);
       return {
         ...state,
         blocks: {
           ...state.blocks,
           blocks: state.blocks.blocks.set(action.savedBlock.id, {
             ...action.savedBlock,
+            saveState: "saved",
             key: action.block.key,
           }),
-          drafts: newDrafts,
+          drafts: newDraftsBlockComplete,
         },
       };
     case "save block complete":
@@ -386,7 +402,7 @@ export const reducer = (state: State, action: Action): State => {
         },
       };
     case "save page complete":
-      const newDraftIds = state.pages.draftIds.filter(
+      const newDraftPageIds = state.pages.draftIds.filter(
         (id) => id !== action.pageId
       );
       return {
@@ -394,7 +410,7 @@ export const reducer = (state: State, action: Action): State => {
         pages: {
           ...state.pages,
           pageIds: [...state.pages.pageIds, action.savedPageId],
-          draftIds: newDraftIds,
+          draftIds: newDraftPageIds,
         },
       };
     case "set active page":
@@ -433,6 +449,37 @@ export const reducer = (state: State, action: Action): State => {
           error: action.error,
         },
       };
+    case "delete page complete":
+      return {
+        ...state,
+        pages: {
+          ...state.pages,
+          pageIds: state.pages.pageIds.filter((id) => id !== action.pageId),
+          draftIds: state.pages.draftIds.filter((id) => id !== action.pageId),
+        },
+      };
+    case "delete block":
+      return {
+        ...state,
+        blocks: {
+          ...state.blocks,
+          deleting: [...state.blocks.deleting, action.blockId],
+        },
+      };
+    case "delete block complete":
+      const newBlocks = new Map(state.blocks.blocks);
+      newBlocks.delete(action.blockId);
+      const newDraftsDeleteBlock = new Map(state.blocks.drafts);
+      newDraftsDeleteBlock.delete(action.blockId);
+      return {
+        ...state,
+        blocks: {
+          ...state.blocks,
+          blocks: newBlocks,
+          drafts: newDraftsDeleteBlock,
+          deleting: state.blocks.deleting.filter((id) => id !== action.blockId),
+        },
+      };
     default:
       return state;
   }
@@ -448,6 +495,7 @@ export const initialState: State = {
     status: "pending",
     blocks: new Map<string, Block>(),
     drafts: new Map<string, Block>(),
+    deleting: [],
   },
   activeBlock: "",
   editorStates: new Map<string, EditorState>(),

@@ -4,7 +4,7 @@ import PagesList from "../components/PagesList";
 import Sidebar from "../components/ui/Sidebar";
 import StatusPanel from "../components/StatusPanel";
 import Editor from "../components/Editor";
-import { useParams } from "react-router-dom";
+import { Redirect, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import useApp from "../hooks/useApp";
 import NotFound from "../components/ui/NotFound";
@@ -13,6 +13,8 @@ import CopyLink from "../components/CopyLink";
 import ConnectWallet from "../components/ConnectButton";
 import CreatePage from "../components/CreatePage";
 import PageContent from "../components/ui/Editor";
+import DeletePage from "../components/DeletePage";
+import useActivePage from "../hooks/useActivePage";
 
 interface Params {
   id: string;
@@ -21,6 +23,7 @@ interface Params {
 function Page() {
   let { id } = useParams<Params>();
   let { state, loadCeramic, loadPages, loadBlocks, setActivePage } = useApp();
+  let { page } = useActivePage();
   let [loadingState, setLoadingState] = useState("loading");
 
   useEffect(() => {
@@ -62,11 +65,12 @@ function Page() {
         <CreatePage />
       </Sidebar>
       <Content>
-        {loadingState === "failed" ? (
-          <NotFound />
-        ) : (
+        {loadingState === "failed" && <NotFound />}
+        {loadingState === "loaded" && !page && <Redirect to="/" />}
+        {loadingState === "loaded" && page && (
           <div className="col-span-3">
             <Menu>
+              <DeletePage />
               <CopyLink />
               <ConnectWallet />
             </Menu>

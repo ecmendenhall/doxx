@@ -9,7 +9,7 @@ interface Props {
 const Page = ({ block }: Props) => {
   return (
     <div className="my-1">
-      <PageLink page={block} underline />
+      <PageLink page={block} underline spinner={false} />
     </div>
   );
 };

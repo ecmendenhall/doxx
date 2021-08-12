@@ -18,7 +18,7 @@ import "@draft-js-plugins/linkify/lib/plugin.css";
 import "prismjs/themes/prism.css";
 import PluginEditor from "@draft-js-plugins/editor";
 import { useCallback } from "react";
-import SaveSpinner from "./ui/SaveSpinner";
+import BlockMenu from "./ui/BlockMenu";
 
 interface Props {
   block: Block;
@@ -61,11 +61,12 @@ const getInitialState = (
 
 const EditText = ({ block }: Props) => {
   const {
-    state: { ceramic, editorStates },
+    state: { idx, ceramic, editorStates },
     setBlock,
     saveBlock,
     setActiveBlock,
     setEditorState,
+    deleteBlock,
   } = useApp();
   const [editorState, setEditorState2] = useState(
     getInitialState(editorStates, block as TextBlock)
@@ -124,20 +125,17 @@ const EditText = ({ block }: Props) => {
 
   return (
     <Text>
-      <div className="flex flex-row" onClick={handleClick}>
-        <SaveSpinner block={block} />
-        <div className="ml-2">
-          <Editor
-            ref={ref}
-            placeholder={"Text"}
-            editorState={editorState}
-            plugins={plugins}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            onFocus={handleFocus}
-          />
-          <EmojiSuggestions />
-        </div>
+      <div onClick={handleClick}>
+        <Editor
+          ref={ref}
+          placeholder={"Text"}
+          editorState={editorState}
+          plugins={plugins}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          onFocus={handleFocus}
+        />
+        <EmojiSuggestions />
       </div>
     </Text>
   );

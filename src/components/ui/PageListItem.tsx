@@ -14,7 +14,7 @@ const PageListItem = ({ page, active }: Props) => {
 
   return (
     <li className={className}>
-      <PageLink page={page} underline={false} />
+      <PageLink page={page} underline={false} spinner />
     </li>
   );
 };
