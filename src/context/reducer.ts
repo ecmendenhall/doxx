@@ -158,7 +158,10 @@ export type SaveBlockComplete = {
   savedBlock: Block;
 };
 export type SetActiveBlock = { type: "set active block"; blockId: string };
-export type DeleteBlock = { type: "delete block"; blockId: string };
+export type DeleteBlock = {
+  type: "delete block";
+  blockId: string;
+};
 export type DeleteBlockComplete = {
   type: "delete block complete";
   blockId: string;

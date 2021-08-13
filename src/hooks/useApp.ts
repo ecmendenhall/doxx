@@ -33,7 +33,7 @@ function useApp() {
     async (idxClient: IDX, ceramic: CeramicClient) => {
       try {
         dispatch({ type: "pages loading" });
-        const pageIds = await idx.loadPages(idxClient, ceramic);
+        const pageIds = await idx.loadPages(idxClient);
         dispatch({ type: "pages loaded", pageIds: pageIds });
       } catch (err) {
         dispatch({ type: "pages failed", error: err });
@@ -86,7 +86,7 @@ function useApp() {
       const { id, saveState, ...pageParams } = page;
       const savedPage = await idx.createPage(idxClient, ceramic, pageParams);
       dispatch({
-        type: "save block complete",
+        type: "save draft block complete",
         block: page,
         savedBlock: savedPage,
       });
@@ -130,6 +130,7 @@ function useApp() {
         ...blockParams,
         parent: parent.id,
       });
+      console.log("savedBlock: ", savedBlock);
       const latestParent =
         state.blocks.blocks.get(parent.id) ||
         state.blocks.drafts.get(parent.id) ||
@@ -149,10 +150,15 @@ function useApp() {
         state.blocks.blocks.get(block.id) ||
         state.blocks.drafts.get(block.id) ||
         savedBlock;
+      console.log("latestBlock: ", latestBlock);
       dispatch({
         type: "save draft block complete",
         block: block,
-        savedBlock: { ...latestBlock, id: savedBlock.id },
+        savedBlock: {
+          ...latestBlock,
+          id: savedBlock.id,
+          parent: savedBlock.parent,
+        },
       });
       dispatch({
         type: "save block complete",
@@ -244,14 +250,51 @@ function useApp() {
   const deleteBlock = useCallback(
     async (idxClient: IDX, ceramicClient: CeramicClient, blockId: string) => {
       try {
-        dispatch({ type: "delete block", blockId: blockId });
-        await idx.deleteBlock(idxClient, ceramicClient, blockId);
-        dispatch({ type: "delete block complete", blockId: blockId });
+        const block =
+          state.blocks.blocks.get(blockId) || state.blocks.drafts.get(blockId);
+        console.log("deleting block:");
+        console.log(blockId);
+        console.log(state.blocks.blocks);
+        console.log(state.blocks.drafts);
+
+        console.log(block);
+        if (block) {
+          dispatch({ type: "delete block", blockId: blockId });
+          const parent =
+            state.blocks.blocks.get(block.parent) ||
+            state.blocks.drafts.get(block.parent);
+          if (parent) {
+            console.log("parent:");
+            console.log(parent);
+            const updatedParent = {
+              ...parent,
+              content: parent.content.filter((id) => id !== block.id),
+            };
+            dispatch({ type: "set block", block: updatedParent });
+          }
+          await idx.deleteBlock(idxClient, ceramicClient, blockId);
+          dispatch({ type: "delete block complete", blockId: blockId });
+        }
       } catch (err) {
         console.log(err);
       }
     },
-    [dispatch]
+    [dispatch, state.blocks]
+  );
+
+  const loadPage = useCallback(
+    async (ceramicClient: CeramicClient, pageId: string) => {
+      try {
+        const page = await ceramic.readBlock(ceramicClient, pageId);
+        const children = await ceramic.readBlocks(ceramicClient, page.content);
+        [page, ...children].forEach((b) => {
+          setBlock(b);
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    [dispatch, setBlock]
   );
 
   return {
@@ -272,6 +315,7 @@ function useApp() {
     loadProfile,
     deletePage,
     deleteBlock,
+    loadPage,
   };
 }
 

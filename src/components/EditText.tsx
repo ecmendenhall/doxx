@@ -47,8 +47,7 @@ const getInitialState = (
 ) => {
   const editorState = editorStates.get(key);
   if (editorState) {
-    return editorState;
-    //return EditorState.moveFocusToEnd(editorState);
+    return EditorState.moveFocusToEnd(editorState);
   } else {
     const content = properties.title[0][0];
     if (content === "") {
@@ -66,7 +65,6 @@ const EditText = ({ block }: Props) => {
     saveBlock,
     setActiveBlock,
     setEditorState,
-    deleteBlock,
   } = useApp();
   const [editorState, setEditorState2] = useState(
     getInitialState(editorStates, block as TextBlock)
@@ -117,6 +115,7 @@ const EditText = ({ block }: Props) => {
 
   const handleFocus = useCallback(() => {
     setActiveBlock(block.key);
+    ref && ref.current?.focus();
   }, [block, setActiveBlock]);
 
   const handleClick = useCallback(() => {
@@ -124,8 +123,8 @@ const EditText = ({ block }: Props) => {
   }, [ref]);
 
   return (
-    <Text>
-      <div onClick={handleClick}>
+    <div onClick={handleClick}>
+      <Text>
         <Editor
           ref={ref}
           placeholder={"Text"}
@@ -136,8 +135,8 @@ const EditText = ({ block }: Props) => {
           onFocus={handleFocus}
         />
         <EmojiSuggestions />
-      </div>
-    </Text>
+      </Text>
+    </div>
   );
 };
 

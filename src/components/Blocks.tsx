@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { Block } from "../blocks";
 import Heading from "../blocks/Heading";
 import Page from "../blocks/Page";
@@ -6,13 +6,11 @@ import Text from "../blocks/Text";
 import useActivePage from "../hooks/useActivePage";
 import useApp from "../hooks/useApp";
 import BlockMenu from "./ui/BlockMenu";
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { useEffect } from "react";
 
 interface Props {
   enabled: boolean;
 }
-
-const BlocksContainer = {};
 
 const Blocks = ({ enabled }: Props) => {
   const {
@@ -21,7 +19,6 @@ const Blocks = ({ enabled }: Props) => {
       ceramic,
       blocks: { blocks, drafts, deleting },
     },
-    saveBlock,
     deleteBlock,
   } = useApp();
   const { page } = useActivePage();
@@ -32,36 +29,7 @@ const Blocks = ({ enabled }: Props) => {
         deleteBlock(idx.idx, ceramic.ceramic, block.id);
       }
     },
-    [idx, ceramic]
-  );
-
-  const handleDragEnd = useCallback(
-    (result) => {
-      const { destination, source, draggableId } = result;
-      if (!destination) {
-        return;
-      }
-
-      if (
-        destination.droppableId === source.droppableId &&
-        destination.index === source.index
-      ) {
-        return;
-      }
-
-      const newPageBlocks = Array.from(page.content);
-      newPageBlocks.splice(source.index, 1);
-      newPageBlocks.splice(destination.index, 0, draggableId);
-
-      const newPage = {
-        ...page,
-        content: newPageBlocks,
-      };
-      if (ceramic.status === "done") {
-        saveBlock(ceramic.ceramic, newPage);
-      }
-    },
-    [page, ceramic]
+    [idx, ceramic, blocks, drafts]
   );
 
   const renderBlock = (block: Block) => {
@@ -84,37 +52,21 @@ const Blocks = ({ enabled }: Props) => {
   const renderBlocks = (blockIds: string[]) => {
     return blockIds
       .filter((id: string) => !deleting.includes(id))
-      .map((id: string, index: number) => {
+      .map((id: string) => {
         const block = blocks.get(id) || drafts.get(id);
         return (
           block && (
-            <Draggable
-              draggableId={block.id}
-              index={index}
-              isDragDisabled={!enabled}
-            >
-              {(provided) => {
-                return (
-                  <div
-                    className="flex flex-row bg-white"
-                    {...provided.draggableProps}
-                    ref={provided.innerRef}
-                  >
-                    {enabled && (
-                      <div {...provided.dragHandleProps}>
-                        <BlockMenu
-                          block={block}
-                          onDelete={() => {
-                            handleDelete(block);
-                          }}
-                        />
-                      </div>
-                    )}
-                    {renderBlock(block)}
-                  </div>
-                );
-              }}
-            </Draggable>
+            <div className="flex flex-row bg-white">
+              {enabled && (
+                <BlockMenu
+                  block={block}
+                  onDelete={() => {
+                    handleDelete(block);
+                  }}
+                />
+              )}
+              {renderBlock(block)}
+            </div>
           )
         );
       });
@@ -122,22 +74,7 @@ const Blocks = ({ enabled }: Props) => {
 
   const blocksAndDrafts = page ? [...page.content, ...page.drafts] : [];
 
-  return (
-    <div>
-      {page && (
-        <DragDropContext onDragEnd={handleDragEnd}>
-          <Droppable droppableId={page.id}>
-            {(provided) => (
-              <div {...provided.droppableProps} ref={provided.innerRef}>
-                {page && renderBlocks(blocksAndDrafts)}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        </DragDropContext>
-      )}
-    </div>
-  );
+  return <div> {page && renderBlocks(blocksAndDrafts)}</div>;
 };
 
 export default Blocks;

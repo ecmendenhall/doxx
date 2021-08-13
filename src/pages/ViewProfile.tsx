@@ -13,6 +13,9 @@ import { utils } from "ethers";
 import { BasicProfile } from "@ceramicstudio/idx-constants";
 import Profile from "../components/ui/Profile";
 import Menu from "../components/ui/Menu";
+import Button from "../components/ui/Button";
+import CeramicClient from "@ceramicnetwork/http-client";
+import { setSourceMapRange } from "typescript";
 
 interface Params {
   id: string;
@@ -56,16 +59,30 @@ const getProfile = async (address: string) => {
   }
 };
 
+const loadPages = async (address: string, ceramicClient: CeramicClient) => {
+  try {
+    const caip10 = idx.caip10FromAddress(address);
+    const pages = await idx.loadUserPages(idxClient, caip10);
+    const blocks = await idx.loadUserBlocks(idxClient, ceramicClient, caip10);
+    return [pages, blocks] as const;
+  } catch (e) {
+    console.log(e);
+    return [];
+  }
+};
+
 function ViewProfile() {
   const { id } = useParams<Params>();
   const {
-    state: { provider },
+    state: { provider, idx, ceramic },
     loadProvider,
     loadCeramic,
+    setBlock,
   } = useApp();
   let [loadingState, setLoadingState] = useState("pending");
   let [profile, setProfile] =
     useState<{ name: string | null; address: string; profile: BasicProfile }>();
+  let [pages, setPages] = useState<string[]>([]);
 
   useEffect(() => {
     const loadProfile = async (provider: Web3Provider) => {
@@ -73,6 +90,13 @@ function ViewProfile() {
         const [name, address] = await parseId(id, provider);
         if (address) {
           const profile = await getProfile(address);
+          if (ceramic.status === "done") {
+            const [pages, blocks] = await loadPages(address, ceramic.ceramic);
+            setPages(pages);
+            for (const block of blocks.values()) {
+              setBlock(block);
+            }
+          }
           console.log(profile);
           if (profile) {
             setProfile({ name, address, profile });
@@ -101,9 +125,16 @@ function ViewProfile() {
   return (
     <Grid>
       <Sidebar>
-        <PagesList />
+        <PagesList content={pages} level={0} />
       </Sidebar>
       <Menu>
+        {idx.status === "done" && (
+          <Link to="/edit/profile">
+            <Button onClick={() => {}} primary>
+              Edit Profile
+            </Button>
+          </Link>
+        )}
         <div className="lg:hidden bg-gray-100 p-2 shadow-md rounded-lg">
           <Link to="/">
             <h1 className="font-script text-purple-800 text-2xl">📑 Doxx</h1>

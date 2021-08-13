@@ -1,30 +1,81 @@
+import { useState } from "react";
 import { Block, Page } from "../blocks";
 import useApp from "../hooks/useApp";
 import PageListItem from "./ui/PageListItem";
 
-const PagesList = () => {
+interface Props {
+  content: string[];
+  level: number;
+}
+
+interface SubListProps {
+  page: Block;
+  level: number;
+  activePage: string;
+  subPages: string[];
+}
+
+const SubList = ({ page, level, activePage, subPages }: SubListProps) => {
+  const [open, setOpen] = useState(false);
+
+  const toggleOpen = () => {
+    setOpen(!open);
+  };
+
+  return (
+    <div>
+      <PageListItem
+        page={page as Page}
+        key={page.id}
+        active={activePage === page.id}
+        level={level}
+        showToggle={subPages.length > 0}
+        toggled={open}
+        onToggle={toggleOpen}
+      />
+      {subPages && (
+        <div className={open ? "block" : "hidden"}>
+          <PagesList content={subPages} level={level + 1} />
+        </div>
+      )}
+    </div>
+  );
+};
+
+const PagesList = ({ content, level }: Props) => {
   const {
     state: {
       blocks: { blocks, drafts },
-      pages: { pageIds, draftIds },
       activePage,
     },
   } = useApp();
 
   const isPage = (item: Block | undefined): item is Block => {
-    return !!item;
+    return !!item && item.type === "page";
   };
 
   const getPage = (id: string) => {
     return blocks.get(id) || drafts.get(id);
   };
 
-  const pageBlocks = [...pageIds, ...draftIds].map(getPage).filter(isPage);
+  const subPages = (content: string[]) => {
+    return content
+      .map(getPage)
+      .filter(isPage)
+      .map((p) => p.id);
+  };
+
+  const pageBlocks = content.map(getPage).filter(isPage);
 
   return (
     <ul>
       {pageBlocks.map((page) => (
-        <PageListItem page={page as Page} active={activePage === page.id} />
+        <SubList
+          page={page}
+          level={level}
+          activePage={activePage}
+          subPages={subPages(page.content)}
+        />
       ))}
     </ul>
   );

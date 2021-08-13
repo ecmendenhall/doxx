@@ -5,12 +5,14 @@ const CreatePage = () => {
   const {
     state: { idx, ceramic },
     saveNewPage,
+    setActivePage,
   } = useApp();
 
   const onClick = () => {
     if (idx.status === "done" && ceramic.status === "done") {
       const page = createEmptyPage();
       saveNewPage(idx.idx, ceramic.ceramic, page);
+      setActivePage(page.id);
     }
   };
 

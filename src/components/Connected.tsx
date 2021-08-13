@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import useApp from "../hooks/useApp";
 import { ConnectIDX } from "./ConnectIDX";
 import { formatAddress } from "./ui";
@@ -13,7 +14,9 @@ export const Connected = () => {
 
     return (
       <Button onClick={onClick} primary>
-        {ensName ? ensName : formatAddress(address)}
+        <Link to={`/${ensName || address}`}>
+          {ensName ? ensName : formatAddress(address)}
+        </Link>
       </Button>
     );
   } else {

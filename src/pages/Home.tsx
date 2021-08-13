@@ -7,11 +7,9 @@ import Sidebar from "../components/ui/Sidebar";
 import StatusPanel from "../components/StatusPanel";
 import PageContent from "../components/ui/Editor";
 import useApp from "../hooks/useApp";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Menu from "../components/ui/Menu";
 import CopyLink from "../components/CopyLink";
-import CeramicClient from "@ceramicnetwork/http-client";
-import StreamID from "@ceramicnetwork/streamid";
 
 function Home() {
   const { state, loadCeramic, loadPages, loadBlocks } = useApp();
@@ -28,19 +26,6 @@ function Home() {
       if (state.blocks.status === "pending") {
         loadBlocks(state.idx.idx, state.ceramic.ceramic);
       }
-
-      const clearPins = async (ceramic: CeramicClient) => {
-        const pins = await ceramic.pin.ls();
-        console.log("clearing pins");
-        const arr = [];
-        for await (const item of pins) {
-          arr.push(item);
-          //await ceramic.pin.rm(StreamID.fromString(item));
-        }
-        console.log(arr);
-        //console.log("done clearing pins");
-      };
-      clearPins(state.ceramic.ceramic);
     }
   }, [
     state.ceramic,
@@ -54,7 +39,10 @@ function Home() {
   return (
     <Grid>
       <Sidebar>
-        <PagesList />
+        <PagesList
+          content={[...state.pages.pageIds, ...state.pages.draftIds]}
+          level={0}
+        />
         <CreatePage />
       </Sidebar>
       <Content>

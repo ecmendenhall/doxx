@@ -6,6 +6,7 @@ import { schemas } from "../config/deployedSchemas.json";
 import ceramic from "./ceramic";
 import { BasicProfile, CryptoAccounts } from "@ceramicstudio/idx-constants";
 import { StreamID } from "@ceramicnetwork/streamid";
+import Content from "../components/ui/Content";
 
 export type BlockParams = Omit<
   Block,
@@ -27,8 +28,32 @@ const loadBlocks = async (idx: IDX, ceramicClient: CeramicClient) => {
   return blocks;
 };
 
-const loadPages = async (idx: IDX, ceramicClient: CeramicClient) => {
+const loadUserBlocks = async (
+  idx: IDX,
+  ceramicClient: CeramicClient,
+  did: string
+) => {
+  const blockIdsResponse = await idx.get<{ blocks: Array<string> }>(
+    "blocks",
+    did
+  );
+  const blockIds = blockIdsResponse?.blocks ?? [];
+  const blocksResponse = await ceramic.readBlocks(ceramicClient, blockIds);
+  let blocks = new Map<string, Block>();
+  blocksResponse.forEach((block) => {
+    blocks.set(block.id, block);
+  });
+  return blocks;
+};
+
+const loadPages = async (idx: IDX) => {
   const pageIdsResponse = await idx.get<{ pages: Array<string> }>("pages");
+  const pageIds = pageIdsResponse?.pages ?? [];
+  return pageIds;
+};
+
+const loadUserPages = async (idx: IDX, did: string) => {
+  const pageIdsResponse = await idx.get<{ pages: Array<string> }>("pages", did);
   const pageIds = pageIdsResponse?.pages ?? [];
   return pageIds;
 };
@@ -65,9 +90,23 @@ const updateBlock = async (
   await savedBlock.update(block);
 };
 
-const deleteBlock = async (idx: IDX, ceramic: CeramicClient, id: string) => {
+const deleteBlock = async (
+  idx: IDX,
+  ceramicClient: CeramicClient,
+  id: string
+) => {
+  const block = await ceramic.readBlock(ceramicClient, id);
+  if (block.parent != "") {
+    const parent = await ceramic.readBlock(ceramicClient, block.parent);
+    const updatedParent = {
+      ...parent,
+      content: parent.content.filter((id) => id !== block.id),
+    };
+    await updateBlock(ceramicClient, updatedParent, parent.id);
+  }
+
   const streamID = StreamID.fromString(id);
-  //await ceramic.pin.rm(streamID);
+  await ceramicClient.pin.rm(streamID);
 
   const blockIndex = await idx.get<BlockIndex>("blocks");
   const blocks = blockIndex?.blocks ?? [];
@@ -137,6 +176,8 @@ const exp = {
   saveProfile,
   deletePage,
   deleteBlock,
+  loadUserBlocks,
+  loadUserPages,
 };
 
 export default exp;

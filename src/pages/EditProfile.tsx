@@ -14,7 +14,7 @@ import storage from "../lib/storage";
 
 function EditProfile() {
   const {
-    state: { idx, ceramic, provider, profile },
+    state: { idx, ceramic, provider, profile, pages },
     loadCeramic,
     loadProfile,
   } = useApp();
@@ -52,7 +52,7 @@ function EditProfile() {
     if (idx.status === "done") {
       console.log(fileData);
       const files = Object.values(fileData);
-      if (files) {
+      if (files.length > 0) {
         const cid = await storage.storeFiles(files);
         Object.entries(fileData).forEach(async ([name, file]) => {
           console.log(name);
@@ -70,7 +70,6 @@ function EditProfile() {
           profileData[name] = { original: imageData };
         });
       }
-      console.log(profileData);
       return await idxClient.saveProfile(idx.idx, profileData);
     }
   };
@@ -78,7 +77,7 @@ function EditProfile() {
   return (
     <Grid>
       <Sidebar>
-        <PagesList />
+        <PagesList content={[...pages.pageIds, ...pages.draftIds]} level={0} />
       </Sidebar>
       <Menu>
         <ConnectButton />

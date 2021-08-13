@@ -15,6 +15,7 @@ import CreatePage from "../components/CreatePage";
 import PageContent from "../components/ui/Editor";
 import DeletePage from "../components/DeletePage";
 import useActivePage from "../hooks/useActivePage";
+import PageIndexSchema from "../schemas/eth.doxx.PageIndex";
 
 interface Params {
   id: string;
@@ -22,46 +23,40 @@ interface Params {
 
 function Page() {
   let { id } = useParams<Params>();
-  let { state, loadCeramic, loadPages, loadBlocks, setActivePage } = useApp();
+  let { state, loadCeramic, loadPage, setActivePage } = useApp();
   let { page } = useActivePage();
-  let [loadingState, setLoadingState] = useState("loading");
+  let [loadingState, setLoadingState] = useState("pending");
 
   useEffect(() => {
     loadCeramic();
   }, [loadCeramic]);
 
   useEffect(() => {
-    if (state.idx.status === "done" && state.ceramic.status === "done") {
-      loadPages(state.idx.idx, state.ceramic.ceramic);
-      loadBlocks(state.idx.idx, state.ceramic.ceramic);
+    if (state.ceramic.status === "done" && loadingState == "pending") {
+      setLoadingState("loading");
+      loadPage(state.ceramic.ceramic, `ceramic://${id}`);
     }
-  }, [state.ceramic, state.idx, loadPages, loadBlocks]);
+  }, [state.ceramic.status, id]);
 
   useEffect(() => {
-    const loadPage = async () => {
-      if (state.blocks.status === "done") {
-        const page = state.blocks.blocks.get(`ceramic://${id}`);
-        if (page) {
-          setActivePage(page.id);
-          setLoadingState("loaded");
-        } else {
-          setLoadingState("failed");
-        }
+    if (state.blocks.status === "done") {
+      const page = state.blocks.blocks.get(`ceramic://${id}`);
+      if (page) {
+        setActivePage(page.id);
+        setLoadingState("loaded");
+      } else {
+        setLoadingState("failed");
       }
-    };
-    loadPage();
-  }, [
-    state.ceramic,
-    id,
-    setActivePage,
-    state.blocks.blocks,
-    state.blocks.status,
-  ]);
+    }
+  }, [id, setActivePage, state.blocks]);
 
   return (
     <Grid>
       <Sidebar>
-        <PagesList />
+        <PagesList
+          content={[...state.pages.pageIds, ...state.pages.draftIds]}
+          level={0}
+        />
         <CreatePage />
       </Sidebar>
       <Content>

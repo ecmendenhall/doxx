@@ -13,11 +13,18 @@ const DeletePage = () => {
     setActivePage,
   } = useApp();
   const { page } = useActivePage();
-  const [deleting, setDeleting] = useState(false);
+  const [status, setStatus] = useState("pending");
 
   const onClick = async (page: Page) => {
-    if (idx.status === "done" && ceramic.status === "done") {
-      setDeleting(true);
+    if (status == "pending") {
+      setStatus("confirm");
+    }
+    if (
+      idx.status === "done" &&
+      ceramic.status === "done" &&
+      status === "confirm"
+    ) {
+      setStatus("deleting");
       await deletePage(idx.idx, ceramic.ceramic, page.id);
       setActivePage("");
     }
@@ -27,7 +34,9 @@ const DeletePage = () => {
     <span>
       {page && (
         <Button onClick={() => onClick(page)} primary={false}>
-          {deleting ? "Deleting..." : "Delete Page"}
+          {status === "pending" && "Delete Page"}
+          {status === "confirm" && "Really?"}
+          {status === "deleting" && "Deleting..."}
         </Button>
       )}
     </span>

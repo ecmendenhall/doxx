@@ -13,32 +13,38 @@ const BlockMenu = ({ active, onClick }: Props) => {
   const className = `absolute ${active ? "block" : "hidden"}`;
   return (
     <div className={className}>
-      <ul className="p-1 divide-y divide-gray-200 rounded-lg shadow-md cursor-pointer">
-        <li className="hover:bg-gray-100" onMouseDown={() => onClick("page")}>
+      <ul className="divide-y divide-gray-200 rounded-lg shadow-md cursor-pointer">
+        <li
+          className="px-1 py-2 hover:bg-gray-100"
+          onMouseDown={() => onClick("page")}
+        >
           📑 Page
         </li>
-        <li className="hover:bg-gray-100" onMouseDown={() => onClick("text")}>
+        <li
+          className="px-1 py-2 hover:bg-gray-100"
+          onMouseDown={() => onClick("text")}
+        >
           ✍️ Text
         </li>
         <li
-          className="hover:bg-gray-100"
+          className="px-1 py-2 hover:bg-gray-100"
           onMouseDown={() => onClick("heading-1")}
         >
           👉 Heading 1
         </li>
         <li
-          className="hover:bg-gray-100"
+          className="px-1 py-2 hover:bg-gray-100"
           onMouseDown={() => onClick("heading-2")}
         >
           👉 Heading 2
         </li>
         <li
-          className="hover:bg-gray-100"
+          className="px-1 py-2 hover:bg-gray-100"
           onMouseDown={() => onClick("heading-3")}
         >
           👉 Heading 3
         </li>
-        <li className="hover:bg-gray-100" onMouseDown={() => {}}>
+        <li className="px-1 py-2 hover:bg-gray-100" onMouseDown={() => {}}>
           🖼 Image
         </li>
       </ul>

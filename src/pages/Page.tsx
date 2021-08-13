@@ -59,7 +59,6 @@ function Page() {
         setLoadingState("loading");
         try {
           const block = await ceramic.readBlock(state.ceramic.ceramic, id);
-          console.log(block.controllers);
           const accounts = await idx.loadAccounts(
             idxClient,
             block.controllers[0]
