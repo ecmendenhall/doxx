@@ -1,6 +1,16 @@
 import { BasicProfile } from "@ceramicstudio/idx-constants";
 import React, { useState } from "react";
 import storage from "../../lib/storage";
+import { Usernames } from "../../schemas";
+import EmojiPicker from "./EmojiPicker";
+
+import github from "super-tiny-icons/images/svg/github.svg";
+import twitter from "super-tiny-icons/images/svg/twitter.svg";
+import discord from "super-tiny-icons/images/svg/discord.svg";
+import telegram from "super-tiny-icons/images/svg/telegram.svg";
+import signal from "super-tiny-icons/images/svg/signal.svg";
+import email from "super-tiny-icons/images/svg/email.svg";
+import keybase from "super-tiny-icons/images/svg/keybase.svg";
 
 interface Props {
   profile: BasicProfile;
@@ -58,7 +68,7 @@ const ImageInput = ({
 
 const CoverImage = ({ profile, onChange }: Props) => {
   return (
-    <div className="absolute bg-gradient-to-tr from-blue-200 via-purple-200 to-purple-50 w-screen h-72">
+    <div className="absolute bg-gradient-to-tr from-blue-200 via-purple-200 to-purple-50 h-72">
       <ImageInput
         imgClassName="object-cover object-center w-screen h-72 shadow-sm"
         labelClassName="fixed right-4 top-60"
@@ -99,22 +109,84 @@ export interface FileData {
   background?: File;
 }
 
-interface FormProps {
-  profile: BasicProfile;
-  onSubmit: (formData: BasicProfile, fileData: FileData) => void;
+interface UsernameInputProps {
+  img: string;
+  text: string;
+  name: string;
+  value: string;
+  onChange: (
+    evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
 }
 
-const EditProfileForm = ({ profile, onSubmit }: FormProps) => {
+const UsernameInput = ({
+  img,
+  text,
+  name,
+  value,
+  onChange,
+}: UsernameInputProps) => {
+  return (
+    <div className="mb-2 p-2">
+      <label className="block font-bold" htmlFor="name">
+        <img
+          src={img}
+          alt={`${text} logo`}
+          className="w-5 mr-1 align-text-top inline"
+        />{" "}
+        {text}
+      </label>
+      <input
+        className="bg-gray-50 border border-purple-200 rounded p-4 focus:bg-white focus:outline-none"
+        type="text"
+        id={name}
+        autoComplete="off"
+        name={name}
+        value={value}
+        onChange={onChange}
+      />
+    </div>
+  );
+};
+
+interface FormProps {
+  profile: BasicProfile;
+  usernames: Usernames;
+  onSubmit: (
+    formData: BasicProfile,
+    usernamesdata: Usernames,
+    fileData: FileData
+  ) => void;
+}
+
+const EditProfileForm = ({ profile, usernames, onSubmit }: FormProps) => {
   const [formData, setFormData] = useState(profile);
+  const [usernamesData, setUsernamesData] = useState(usernames);
   const [fileData, setFileData] = useState({});
   const [submitState, setSubmitState] = useState("saved");
 
-  const onChange = (
+  const onUsernameChange = (
+    evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setUsernamesData({
+      ...usernamesData,
+      [evt.target.name]: evt.target.value,
+    });
+  };
+
+  const onProfileChange = (
     evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setFormData({
       ...formData,
       [evt.target.name]: evt.target.value,
+    });
+  };
+
+  const onEmojiSelect = (emoji: string) => {
+    setFormData({
+      ...formData,
+      emoji: emoji,
     });
   };
 
@@ -128,7 +200,7 @@ const EditProfileForm = ({ profile, onSubmit }: FormProps) => {
   const handleSubmit = (evt: React.MouseEvent) => {
     const handle = async () => {
       setSubmitState("saving");
-      await onSubmit(formData, fileData);
+      await onSubmit(formData, usernamesData, fileData);
       setSubmitState("saved");
     };
     evt.preventDefault();
@@ -154,21 +226,17 @@ const EditProfileForm = ({ profile, onSubmit }: FormProps) => {
                   autoComplete="off"
                   name="name"
                   value={formData.name}
-                  onChange={onChange}
+                  onChange={onProfileChange}
                 />
               </div>
               <div className="mb-2 p-2">
                 <label className="block font-bold" htmlFor="emoji">
                   Emoji
                 </label>
-                <input
-                  className="w-16 bg-gray-50 border border-purple-200 p-4 rounded focus:bg-white focus:outline-none"
-                  type="text"
-                  id="emoji"
-                  autoComplete="off"
-                  name="emoji"
-                  value={formData.emoji}
-                  onChange={onChange}
+                <EmojiPicker
+                  emoji={formData.emoji}
+                  onSelect={onEmojiSelect}
+                  size="4xl"
                 />
               </div>
             </div>
@@ -183,7 +251,7 @@ const EditProfileForm = ({ profile, onSubmit }: FormProps) => {
                 autoComplete="off"
                 name="description"
                 value={formData.description}
-                onChange={onChange}
+                onChange={onProfileChange}
               />
             </div>
             <div className="flex flex-col md:flex-row md:items-center">
@@ -198,7 +266,7 @@ const EditProfileForm = ({ profile, onSubmit }: FormProps) => {
                   autoComplete="off"
                   name="homeLocation"
                   value={formData.homeLocation}
-                  onChange={onChange}
+                  onChange={onProfileChange}
                 />
               </div>
               <div className="mb-2 p-2">
@@ -212,19 +280,74 @@ const EditProfileForm = ({ profile, onSubmit }: FormProps) => {
                   autoComplete="off"
                   name="url"
                   value={formData.url}
-                  onChange={onChange}
+                  onChange={onProfileChange}
                 />
               </div>
             </div>
-            <div className="my-4">
-              <button
-                onClick={handleSubmit}
-                className="font-bold bg-gray-100 hover:bg-gray-300 p-4 rounded-lg shadow-md"
-                disabled={submitState === "saving"}
-              >
-                {submitState === "saved" && "Save Profile"}
-                {submitState === "saving" && "Saving..."}
-              </button>
+          </form>
+          <div className="my-4">
+            <button
+              onClick={handleSubmit}
+              className="font-bold bg-gray-100 hover:bg-gray-300 p-4 rounded-lg shadow-md"
+              disabled={submitState === "saving"}
+            >
+              {submitState === "saved" && "Save Profile"}
+              {submitState === "saving" && "Saving..."}
+            </button>
+          </div>
+        </div>
+        <div className="lg:mt-32">
+          <form className="my-4">
+            <div className="flex flex-col">
+              <UsernameInput
+                name={"github"}
+                img={github}
+                text={"Github"}
+                value={usernamesData.github || ""}
+                onChange={onUsernameChange}
+              />
+              <UsernameInput
+                name={"twitter"}
+                img={twitter}
+                text={"Twitter"}
+                value={usernamesData.twitter || ""}
+                onChange={onUsernameChange}
+              />
+              <UsernameInput
+                name={"discord"}
+                img={discord}
+                text={"Discord"}
+                value={usernamesData.discord || ""}
+                onChange={onUsernameChange}
+              />
+              <UsernameInput
+                name={"telegram"}
+                img={telegram}
+                text={"Telegram"}
+                value={usernamesData.telegram || ""}
+                onChange={onUsernameChange}
+              />
+              <UsernameInput
+                name={"signal"}
+                img={signal}
+                text={"Signal"}
+                value={usernamesData.signal || ""}
+                onChange={onUsernameChange}
+              />
+              <UsernameInput
+                name={"email"}
+                img={email}
+                text={"Email"}
+                value={usernamesData.email || ""}
+                onChange={onUsernameChange}
+              />
+              <UsernameInput
+                name={"keybase"}
+                img={keybase}
+                text={"Keybase"}
+                value={usernamesData.keybase || ""}
+                onChange={onUsernameChange}
+              />
             </div>
           </form>
         </div>

@@ -8,6 +8,7 @@ interface Props {
   showToggle: boolean;
   toggled: boolean;
   onToggle: () => void;
+  edit: boolean;
 }
 
 const ACTIVE = "hover:bg-purple-400 bg-purple-300";
@@ -20,6 +21,7 @@ const PageListItem = ({
   showToggle,
   toggled,
   onToggle,
+  edit,
 }: Props) => {
   const activeClassName = `${active ? ACTIVE : INACTIVE}`;
   const className = `py-1 pr-4 pl-${
@@ -30,7 +32,7 @@ const PageListItem = ({
     <li className={activeClassName}>
       <div className={className}>
         <div className="flex-grow truncate overflow-ellipsis">
-          <PageLink page={page} underline={false} spinner />
+          <PageLink page={page} underline={false} edit={edit} spinner />
         </div>
         {showToggle && (
           <span onClick={onToggle} className="cursor-pointer">

@@ -28,7 +28,7 @@ const PageHeader = ({ enabled }: Props) => {
       <div>
         {page && (
           <div className="text-xl">
-            <EmojiHero page={page} hover={false} />
+            <EmojiHero emoji={page.format.page_icon} size="8xl" hover={false} />
             <PageTitle>
               <h1 className="p2">{page.properties.title[0][0]}</h1>
             </PageTitle>

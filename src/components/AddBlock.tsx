@@ -15,36 +15,36 @@ const BlockMenu = ({ active, onClick }: Props) => {
     <div className={className}>
       <ul className="divide-y divide-gray-200 rounded-lg shadow-md cursor-pointer">
         <li
-          className="px-1 py-2 hover:bg-gray-100"
+          className="p-2 hover:bg-gray-100"
           onMouseDown={() => onClick("page")}
         >
           📑 Page
         </li>
         <li
-          className="px-1 py-2 hover:bg-gray-100"
+          className="p-2 hover:bg-gray-100"
           onMouseDown={() => onClick("text")}
         >
           ✍️ Text
         </li>
         <li
-          className="px-1 py-2 hover:bg-gray-100"
+          className="p-2 hover:bg-gray-100"
           onMouseDown={() => onClick("heading-1")}
         >
           👉 Heading 1
         </li>
         <li
-          className="px-1 py-2 hover:bg-gray-100"
+          className="p-2 hover:bg-gray-100"
           onMouseDown={() => onClick("heading-2")}
         >
           👉 Heading 2
         </li>
         <li
-          className="px-1 py-2 hover:bg-gray-100"
+          className="p-2 hover:bg-gray-100"
           onMouseDown={() => onClick("heading-3")}
         >
           👉 Heading 3
         </li>
-        <li className="px-1 py-2 hover:bg-gray-100" onMouseDown={() => {}}>
+        <li className="p-2 hover:bg-gray-100" onMouseDown={() => {}}>
           🖼 Image
         </li>
       </ul>

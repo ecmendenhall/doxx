@@ -11,12 +11,15 @@ import EditProfileForm, { FileData } from "../components/ui/EditProfileForm";
 import { BasicProfile } from "@ceramicstudio/idx-tools/dist/schemas";
 import idxClient from "../lib/idx";
 import storage from "../lib/storage";
+import { Usernames } from "../schemas";
+import CreatePage from "../components/CreatePage";
 
 function EditProfile() {
   const {
     state: { idx, ceramic, provider, profile, pages },
     loadCeramic,
     loadProfile,
+    loadPages,
   } = useApp();
 
   useEffect(() => {
@@ -30,8 +33,9 @@ function EditProfile() {
       ceramic.status === "done"
     ) {
       loadProfile(idx.idx, provider.address);
+      loadPages(idx.idx, ceramic.ceramic);
     }
-  }, [ceramic, idx, provider, loadProfile]);
+  }, [ceramic, idx, provider, loadProfile, loadPages]);
 
   const getImageDimensions = async (
     dataURL: string
@@ -48,7 +52,11 @@ function EditProfile() {
     });
   };
 
-  const saveProfile = async (profileData: BasicProfile, fileData: FileData) => {
+  const saveProfile = async (
+    profileData: BasicProfile,
+    usernamesData: Usernames,
+    fileData: FileData
+  ) => {
     if (idx.status === "done") {
       console.log(fileData);
       const files = Object.values(fileData);
@@ -70,14 +78,19 @@ function EditProfile() {
           profileData[name] = { original: imageData };
         });
       }
-      return await idxClient.saveProfile(idx.idx, profileData);
+      return await idxClient.saveProfile(idx.idx, profileData, usernamesData);
     }
   };
 
   return (
     <Grid>
       <Sidebar>
-        <PagesList content={[...pages.pageIds, ...pages.draftIds]} level={0} />
+        <PagesList
+          content={[...pages.pageIds, ...pages.draftIds]}
+          level={0}
+          edit
+        />
+        <CreatePage />
       </Sidebar>
       <Menu>
         <ConnectButton />
@@ -86,7 +99,11 @@ function EditProfile() {
         {profile.status === "done" &&
           provider.status === "done" &&
           profile.profile && (
-            <EditProfileForm profile={profile.profile} onSubmit={saveProfile} />
+            <EditProfileForm
+              profile={profile.profile}
+              usernames={profile.usernames || {}}
+              onSubmit={saveProfile}
+            />
           )}
         <StatusPanel />
       </Content>

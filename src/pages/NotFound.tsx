@@ -14,6 +14,7 @@ function NotFoundPage() {
         <PagesList
           content={[...state.pages.pageIds, ...state.pages.draftIds]}
           level={0}
+          edit={false}
         />
       </Sidebar>
       <Content>

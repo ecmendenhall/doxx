@@ -21,7 +21,9 @@ const SelectEmoji = ({ page }: Props) => {
     }
   };
 
-  return <EmojiPicker page={page} onSelect={onSelect} />;
+  return (
+    <EmojiPicker emoji={page.format.page_icon} size="8xl" onSelect={onSelect} />
+  );
 };
 
 export default SelectEmoji;

@@ -1,14 +1,14 @@
 import { useState } from "react";
-import { Page } from "../../blocks";
 import EmojiPickerMenu from "./EmojiPickerMenu";
 import { EmojiHero } from "./EmojiHero";
 
 interface Props {
-  page: Page;
+  emoji?: string;
   onSelect: (emoji: string) => void;
+  size: string;
 }
 
-const EmojiPicker = ({ page, onSelect }: Props) => {
+const EmojiPicker = ({ emoji, onSelect, size }: Props) => {
   const [pickerActive, setPickerActive] = useState(false);
 
   const onBlur = () => {
@@ -26,7 +26,7 @@ const EmojiPicker = ({ page, onSelect }: Props) => {
 
   return (
     <div className="relative">
-      <EmojiHero page={page} onClick={togglePicker} hover />
+      <EmojiHero emoji={emoji} onClick={togglePicker} size={size} hover />
       <EmojiPickerMenu
         active={pickerActive}
         onBlur={onBlur}

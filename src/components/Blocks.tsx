@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { Block } from "../blocks";
 import Heading from "../blocks/Heading";
 import Page from "../blocks/Page";
@@ -6,7 +6,6 @@ import Text from "../blocks/Text";
 import useActivePage from "../hooks/useActivePage";
 import useApp from "../hooks/useApp";
 import BlockMenu from "./ui/BlockMenu";
-import { useEffect } from "react";
 
 interface Props {
   enabled: boolean;
@@ -29,7 +28,7 @@ const Blocks = ({ enabled }: Props) => {
         deleteBlock(idx.idx, ceramic.ceramic, block.id);
       }
     },
-    [idx, ceramic, blocks, drafts]
+    [idx, ceramic, deleteBlock]
   );
 
   const renderBlock = (block: Block) => {

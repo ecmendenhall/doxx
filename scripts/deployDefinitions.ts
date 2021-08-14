@@ -3,6 +3,7 @@ import ceramic from "../src/lib/ceramic";
 import BlockSchema from "../src/schemas/eth.doxx.Block";
 import BlockIndexSchema from "../src/schemas/eth.doxx.BlockIndex";
 import PageIndexSchema from "../src/schemas/eth.doxx.PageIndex";
+import UsernamesSchema from "../src/schemas/eth.doxx.Usernames";
 
 const run = async () => {
   const client = await ceramic.loadClient();
@@ -25,15 +26,24 @@ const run = async () => {
     "Pages",
     pagesIndexSchema
   );
+  const usernamesSchema = await ceramic.publishSchema(client, UsernamesSchema);
+  const usernamesDefinition = await ceramic.publishDefinition(
+    client,
+    "eth.doxx.usernames",
+    "Usernames",
+    usernamesSchema
+  );
   const config = {
     definitions: {
       blocks: blocksDefinition.id.toString(),
       pages: pagesDefinition.id.toString(),
+      usernames: usernamesDefinition.id.toString(),
     },
     schemas: {
       Block: blockSchema.commitId.toUrl(),
       BlockIndex: blockIndexSchema.commitId.toUrl(),
       PageIndex: pagesIndexSchema.commitId.toUrl(),
+      Usernames: usernamesSchema.commitId.toUrl(),
     },
   };
   writeFileSync("./src/config/deployedSchemas.json", JSON.stringify(config));

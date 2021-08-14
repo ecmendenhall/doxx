@@ -15,7 +15,6 @@ import CreatePage from "../components/CreatePage";
 import PageContent from "../components/ui/Editor";
 import DeletePage from "../components/DeletePage";
 import useActivePage from "../hooks/useActivePage";
-import PageIndexSchema from "../schemas/eth.doxx.PageIndex";
 
 interface Params {
   id: string;
@@ -32,11 +31,11 @@ function Page() {
   }, [loadCeramic]);
 
   useEffect(() => {
-    if (state.ceramic.status === "done" && loadingState == "pending") {
+    if (state.ceramic.status === "done" && loadingState === "pending") {
       setLoadingState("loading");
       loadPage(state.ceramic.ceramic, `ceramic://${id}`);
     }
-  }, [state.ceramic.status, id]);
+  }, [state.ceramic, id, loadingState, loadPage]);
 
   useEffect(() => {
     if (state.blocks.status === "done") {
@@ -56,6 +55,7 @@ function Page() {
         <PagesList
           content={[...state.pages.pageIds, ...state.pages.draftIds]}
           level={0}
+          edit
         />
         <CreatePage />
       </Sidebar>

@@ -1,10 +1,8 @@
-import CeramicClient from "@ceramicnetwork/http-client";
 import { useState } from "react";
 import { Page } from "../blocks";
 import useActivePage from "../hooks/useActivePage";
 import useApp from "../hooks/useApp";
 import Button from "./ui/Button";
-import TrashIcon from "./ui/TrashIcon";
 
 const DeletePage = () => {
   const {
@@ -16,7 +14,7 @@ const DeletePage = () => {
   const [status, setStatus] = useState("pending");
 
   const onClick = async (page: Page) => {
-    if (status == "pending") {
+    if (status === "pending") {
       setStatus("confirm");
     }
     if (

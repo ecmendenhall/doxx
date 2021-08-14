@@ -7,7 +7,7 @@ import Sidebar from "../components/ui/Sidebar";
 import StatusPanel from "../components/StatusPanel";
 import PageContent from "../components/ui/Editor";
 import useApp from "../hooks/useApp";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Menu from "../components/ui/Menu";
 import CopyLink from "../components/CopyLink";
 
@@ -42,6 +42,7 @@ function Home() {
         <PagesList
           content={[...state.pages.pageIds, ...state.pages.draftIds]}
           level={0}
+          edit
         />
         <CreatePage />
       </Sidebar>

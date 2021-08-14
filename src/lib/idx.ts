@@ -6,7 +6,7 @@ import { schemas } from "../config/deployedSchemas.json";
 import ceramic from "./ceramic";
 import { BasicProfile, CryptoAccounts } from "@ceramicstudio/idx-constants";
 import { StreamID } from "@ceramicnetwork/streamid";
-import Content from "../components/ui/Content";
+import { Usernames } from "../schemas";
 
 export type BlockParams = Omit<
   Block,
@@ -67,7 +67,7 @@ const createBlock = async (
     controllers: [idx.id],
     schema: schemas.Block,
   });
-  //await ceramic.pin.add(newBlock.id);
+  await ceramic.pin.add(newBlock.id);
   const blockIndex = await idx.get<BlockIndex>("blocks");
   const blocks = blockIndex?.blocks ?? [];
   await idx.set("blocks", {
@@ -96,7 +96,7 @@ const deleteBlock = async (
   id: string
 ) => {
   const block = await ceramic.readBlock(ceramicClient, id);
-  if (block.parent != "") {
+  if (block.parent !== "") {
     const parent = await ceramic.readBlock(ceramicClient, block.parent);
     const updatedParent = {
       ...parent,
@@ -104,6 +104,9 @@ const deleteBlock = async (
     };
     await updateBlock(ceramicClient, updatedParent, parent.id);
   }
+  block.content.forEach((id) => {
+    deleteBlock(idx, ceramicClient, id);
+  });
 
   const streamID = StreamID.fromString(id);
   await ceramicClient.pin.rm(streamID);
@@ -148,11 +151,19 @@ const deletePage = async (idx: IDX, ceramic: CeramicClient, id: string) => {
 };
 
 const loadProfile = async (idx: IDX, caip10Id: string) => {
-  return await idx.get<BasicProfile>("basicProfile", caip10Id);
+  const profile = await idx.get<BasicProfile>("basicProfile", caip10Id);
+  const usernames = await idx.get<Usernames>("usernames", caip10Id);
+  return { profile, usernames };
 };
 
-const saveProfile = async (idx: IDX, profile: BasicProfile) => {
-  return await idx.set("basicProfile", profile);
+const saveProfile = async (
+  idx: IDX,
+  profileParams: BasicProfile,
+  usernamesParams: Usernames
+) => {
+  const profile = await idx.set("basicProfile", profileParams);
+  const usernames = await idx.set("usernames", usernamesParams);
+  return { profile, usernames };
 };
 
 const loadAccounts = async (idx: IDX, did: string) => {

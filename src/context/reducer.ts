@@ -4,6 +4,7 @@ import { JsonRpcSigner, Web3Provider } from "@ethersproject/providers";
 import { EditorState } from "draft-js";
 import { Block } from "../blocks";
 import { BasicProfile } from "@ceramicstudio/idx-constants";
+import { Usernames } from "../schemas";
 
 type PendingStatus = "pending" | "loading";
 
@@ -86,7 +87,11 @@ type ActiveBlockState = string;
 type EditorStates = Map<string, EditorState>;
 
 type ProfilePendingState = { status: PendingStatus };
-type ProfileLoadedState = { status: "done"; profile: BasicProfile | null };
+type ProfileLoadedState = {
+  status: "done";
+  profile: BasicProfile | null;
+  usernames: Usernames | null;
+};
 type ProfileFailedState = { status: "failed"; error: Error };
 
 type ProfileState =
@@ -217,6 +222,7 @@ export type LoadProfileFailed = { type: "profile failed"; error: Error };
 export type SetProfile = {
   type: "profile loaded";
   profile: BasicProfile | null;
+  usernames: Usernames | null;
 };
 export type ProfileAction = LoadProfile | LoadProfileFailed | SetProfile;
 
@@ -442,6 +448,7 @@ export const reducer = (state: State, action: Action): State => {
         profile: {
           status: "done",
           profile: action.profile,
+          usernames: action.usernames,
         },
       };
     case "profile failed":

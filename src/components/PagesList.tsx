@@ -6,6 +6,7 @@ import PageListItem from "./ui/PageListItem";
 interface Props {
   content: string[];
   level: number;
+  edit: boolean;
 }
 
 interface SubListProps {
@@ -13,9 +14,10 @@ interface SubListProps {
   level: number;
   activePage: string;
   subPages: string[];
+  edit: boolean;
 }
 
-const SubList = ({ page, level, activePage, subPages }: SubListProps) => {
+const SubList = ({ page, level, activePage, subPages, edit }: SubListProps) => {
   const [open, setOpen] = useState(false);
 
   const toggleOpen = () => {
@@ -32,17 +34,18 @@ const SubList = ({ page, level, activePage, subPages }: SubListProps) => {
         showToggle={subPages.length > 0}
         toggled={open}
         onToggle={toggleOpen}
+        edit={edit}
       />
       {subPages && (
         <div className={open ? "block" : "hidden"}>
-          <PagesList content={subPages} level={level + 1} />
+          <PagesList content={subPages} level={level + 1} edit={edit} />
         </div>
       )}
     </div>
   );
 };
 
-const PagesList = ({ content, level }: Props) => {
+const PagesList = ({ content, level, edit }: Props) => {
   const {
     state: {
       blocks: { blocks, drafts },
@@ -75,6 +78,8 @@ const PagesList = ({ content, level }: Props) => {
           level={level}
           activePage={activePage}
           subPages={subPages(page.content)}
+          key={page.key}
+          edit={edit}
         />
       ))}
     </ul>

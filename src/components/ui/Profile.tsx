@@ -1,19 +1,54 @@
 import { BasicProfile } from "@ceramicstudio/idx-constants";
+import { Usernames } from "../../schemas";
+import storage from "../../lib/storage";
+
 import github from "super-tiny-icons/images/svg/github.svg";
 import twitter from "super-tiny-icons/images/svg/twitter.svg";
 import discord from "super-tiny-icons/images/svg/discord.svg";
-import storage from "../../lib/storage";
+import telegram from "super-tiny-icons/images/svg/telegram.svg";
+import signal from "super-tiny-icons/images/svg/signal.svg";
+import email from "super-tiny-icons/images/svg/email.svg";
+import keybase from "super-tiny-icons/images/svg/keybase.svg";
 
 interface Props {
   profile: BasicProfile;
+  usernames: Usernames;
   address: string;
   name: string | null;
 }
 
-const Profile = ({ profile, name, address }: Props) => {
+interface SocialLinkProps {
+  img: string;
+  name: string;
+  url?: string;
+  username: string;
+}
+
+const SocialLink = ({ img, name, url, username }: SocialLinkProps) => {
+  return (
+    <div className="mb-2">
+      <span className="p-2">
+        <img
+          src={img}
+          alt={`${name} logo`}
+          className="w-5 mr-1 align-text-top inline"
+        />
+        {url ? (
+          <a href={url} target="_blank" rel="noreferrer">
+            {username}
+          </a>
+        ) : (
+          username
+        )}
+      </span>
+    </div>
+  );
+};
+
+const Profile = ({ profile, usernames, name, address }: Props) => {
   return (
     <div className="col-span-3">
-      <div className="absolute bg-gradient-to-tr from-blue-200 via-purple-200 to-purple-50 w-screen h-72">
+      <div className="absolute bg-gradient-to-tr from-blue-200 via-purple-200 to-purple-50 h-72">
         {profile.background && (
           <img
             className="object-cover object-center w-screen h-72 shadow-sm"
@@ -121,37 +156,60 @@ const Profile = ({ profile, name, address }: Props) => {
           </div>
         </div>
         <div>
-          <div className="lg:mt-48 mt-4">
-            <div className="mb-2">
-              <span className="p-2">
-                <img
-                  src={github}
-                  alt="Github logo"
-                  className="w-5 mr-1 align-text-top inline"
-                />
-                ecmendenhall
-              </span>
-            </div>
-            <div className="mb-1">
-              <span className="p-2">
-                <img
-                  src={twitter}
-                  alt="Twitter logo"
-                  className="w-5 mr-1 align-text-top inline"
-                />
-                ecmendenhall
-              </span>
-            </div>
-            <div className="mb-1">
-              <span className="p-2">
-                <img
-                  src={discord}
-                  alt="Discord logo"
-                  className="w-5 mr-1 align-text-top inline"
-                />
-                horsefacts
-              </span>
-            </div>
+          <div className="lg:mt-36 mt-4">
+            {usernames.twitter && (
+              <SocialLink
+                name={"Twitter"}
+                img={twitter}
+                username={usernames.twitter}
+                url={`https://twitter.com/${usernames.twitter}`}
+              />
+            )}
+            {usernames.github && (
+              <SocialLink
+                name={"Github"}
+                img={github}
+                username={usernames.github}
+                url={`https://github.com/${usernames.github}`}
+              />
+            )}
+            {usernames.discord && (
+              <SocialLink
+                name={"Discord"}
+                img={discord}
+                username={usernames.discord}
+              />
+            )}
+            {usernames.telegram && (
+              <SocialLink
+                name={"Telegram"}
+                img={telegram}
+                username={usernames.telegram}
+                url={`https://t.me/${usernames.telegram}`}
+              />
+            )}
+            {usernames.signal && (
+              <SocialLink
+                name={"Signal"}
+                img={signal}
+                username={usernames.signal}
+              />
+            )}
+            {usernames.email && (
+              <SocialLink
+                name={"Email"}
+                img={email}
+                username={usernames.email}
+              />
+            )}
+            {usernames.keybase && (
+              <SocialLink
+                name={"Keybase"}
+                img={keybase}
+                username={usernames.keybase}
+                url={`https://keybase.io/${usernames.keybase}`}
+              />
+            )}
           </div>
         </div>
       </div>

@@ -1,5 +1,4 @@
 import { v4 as uuid } from "uuid";
-import { StreamID } from "@ceramicnetwork/streamid";
 
 export type SaveState = "new" | "changed" | "saving" | "saved";
 export type BlockType = "page" | "text" | HeadingType;

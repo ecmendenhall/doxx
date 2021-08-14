@@ -8,7 +8,6 @@ import idx from "../lib/idx";
 import CeramicClient from "@ceramicnetwork/http-client";
 import { Block, Page } from "../blocks";
 import { EditorState } from "draft-js";
-import { StreamID } from "@ceramicnetwork/streamid";
 
 function useApp() {
   const { state, dispatch } = useContext(AppContext);
@@ -224,8 +223,12 @@ function useApp() {
       try {
         dispatch({ type: "profile loading" });
         const caip10 = idx.caip10FromAddress(address);
-        const profile = await idx.loadProfile(idxClient, caip10);
-        dispatch({ type: "profile loaded", profile: profile });
+        const { profile, usernames } = await idx.loadProfile(idxClient, caip10);
+        dispatch({
+          type: "profile loaded",
+          profile: profile,
+          usernames: usernames,
+        });
       } catch (err) {
         dispatch({ type: "profile failed", error: err });
       }
@@ -294,7 +297,7 @@ function useApp() {
         console.log(err);
       }
     },
-    [dispatch, setBlock]
+    [setBlock]
   );
 
   return {
