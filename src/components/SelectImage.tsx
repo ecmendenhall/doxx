@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Image as ImageBlock } from "../blocks";
 import useApp from "../hooks/useApp";
 import storage from "../lib/storage";
-import ImageInput from "./ui/ImageInput";
+import ImageInput, { Dimensions } from "./ui/ImageInput";
 import { v4 as uuid } from "uuid";
-import { Block } from "@ethersproject/providers";
 
 interface Props {
   block: ImageBlock;
@@ -13,6 +12,7 @@ interface Props {
 const SelectImage = ({ block }: Props) => {
   const {
     state: { ceramic },
+    setBlock,
     saveBlock,
   } = useApp();
   const [image, setImage] = useState({});
@@ -33,15 +33,42 @@ const SelectImage = ({ block }: Props) => {
     }
   };
 
+  const onResize = (dimensions: Dimensions) => {
+    const { height, width } = dimensions;
+    const newBlock = {
+      ...block,
+      format: {
+        width: width,
+        height: height,
+      },
+    };
+    setBlock(newBlock);
+  };
+
+  const onResizeStop = (dimensions: Dimensions) => {
+    const { height, width } = dimensions;
+    const newBlock = {
+      ...block,
+      format: {
+        width: width,
+        height: height,
+      },
+    };
+    if (ceramic.status === "done") {
+      saveBlock(ceramic.ceramic, newBlock);
+    }
+  };
+
   const empty = !block.properties.source[0][0];
-  const width = empty ? "w-96 h-60" : `w-auto`;
 
   return (
     <div
-      style={{ width: block.format.width }}
-      className={`${width} bg-gradient-to-tr from-blue-200 via-purple-200 to-purple-50`}
+      className="relative"
+      style={{ width: block.format.width, height: block.format.height }}
     >
       <ImageInput
+        resizable
+        width={block.format.width}
         src={
           storage.gatewayUrl(block.properties.source[0][0]) ||
           "data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
@@ -50,7 +77,9 @@ const SelectImage = ({ block }: Props) => {
         name={`image-${uuid()}`}
         alt="image block"
         onChange={onImageChange}
-        imgClassName={`${width} object-cover object-center`}
+        imgClassName={`w-full object-fill object-center`}
+        onResize={onResize}
+        onResizeStop={onResizeStop}
       />
     </div>
   );

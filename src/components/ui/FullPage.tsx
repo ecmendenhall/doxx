@@ -5,7 +5,7 @@ interface Props {
 const FullPage = ({ children }: Props) => {
   return (
     <div className="col-span-6">
-      <div className="h-screen p-16">{children}</div>
+      <div className="h-screen lg:px-32 md:px-16 px-8 py-16">{children}</div>
     </div>
   );
 };

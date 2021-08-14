@@ -122,10 +122,10 @@ function ViewProfile() {
       }
     };
     if (loadingState === "pending") {
-      setLoadingState("loading");
       loadCeramic();
     }
-    if (loadingState === "loading") {
+    if (loadingState === "pending" && ceramic.status === "done") {
+      setLoadingState("loading");
       loadProfile(provider);
     }
   }, [id, loadingState, ceramic, setBlock, loadCeramic]);

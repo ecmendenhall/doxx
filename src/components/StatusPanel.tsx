@@ -11,7 +11,7 @@ const Connections = () => {
   };
 
   return (
-    <div className="fixed bottom-8 right-10 shadow-md py-1 px-2 rounded-lg border-1 border-gray-100">
+    <div className="bg-white z-50 fixed bottom-8 right-10 shadow-md py-1 px-2 rounded-lg border-1 border-gray-100">
       <StatusIndicator
         onClick={loadCeramic}
         status={state.ceramic.status}

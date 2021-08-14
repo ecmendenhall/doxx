@@ -1,5 +1,6 @@
 import { Image as ImageBlock } from "../blocks";
 import SelectImage from "../components/SelectImage";
+import storage from "../lib/storage";
 
 interface Props {
   block: ImageBlock;
@@ -12,7 +13,11 @@ const Image = ({ block, enabled }: Props) => {
       {enabled ? (
         <SelectImage block={block} />
       ) : (
-        <img src={block.properties.source[0][0]} />
+        <img
+          src={storage.gatewayUrl(block.properties.source[0][0])}
+          width={block.format.width}
+          height={block.format.height}
+        />
       )}
     </div>
   );
