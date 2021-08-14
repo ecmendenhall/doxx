@@ -1,6 +1,6 @@
 import { convertFromRaw, EditorState } from "draft-js";
 import Editor from "@draft-js-plugins/editor";
-import { Block } from "../blocks";
+import { Block, Text as TextBlock } from "../blocks";
 import EditText, { createPlugins } from "../components/EditText";
 import DisplayText from "../components/ui/Text";
 
@@ -11,17 +11,17 @@ import "prismjs/themes/prism.css";
 import { useState } from "react";
 
 interface Props {
-  block: Block;
+  block: TextBlock;
   enabled: boolean;
 }
 
 interface ReadOnlyEditorProps {
-  block: Block;
+  block: TextBlock;
 }
 
 const { plugins } = createPlugins();
 
-const getInitialState = ({ properties }: Block) => {
+const getInitialState = ({ properties }: TextBlock) => {
   const content = properties.title[0][0];
   if (content === "") {
     return EditorState.createEmpty();

@@ -80,7 +80,6 @@ const readBlock = async (
   blockId: string
 ): Promise<Block> => {
   const blockResponse = await ceramic.loadStream<TileDocument>(blockId);
-  console.log(blockResponse);
   const content: BlockParams = blockResponse.content as BlockParams;
   return {
     ...content,
@@ -89,7 +88,7 @@ const readBlock = async (
     key: uuid(),
     drafts: [],
     controllers: blockResponse.controllers,
-  };
+  } as Block;
 };
 
 const readBlocks = async (

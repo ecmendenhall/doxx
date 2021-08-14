@@ -44,7 +44,10 @@ const BlockMenu = ({ active, onClick }: Props) => {
         >
           👉 Heading 3
         </li>
-        <li className="p-2 hover:bg-gray-100" onMouseDown={() => {}}>
+        <li
+          className="p-2 hover:bg-gray-100"
+          onMouseDown={() => onClick("image")}
+        >
           🖼 Image
         </li>
       </ul>

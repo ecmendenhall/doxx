@@ -3,6 +3,7 @@ import { Block } from "../blocks";
 import Heading from "../blocks/Heading";
 import Page from "../blocks/Page";
 import Text from "../blocks/Text";
+import Image from "../blocks/Image";
 import useActivePage from "../hooks/useActivePage";
 import useApp from "../hooks/useApp";
 import BlockMenu from "./ui/BlockMenu";
@@ -43,6 +44,8 @@ const Blocks = ({ enabled }: Props) => {
         return <Heading block={block} key={block.key} enabled={enabled} />;
       case "heading-3":
         return <Heading block={block} key={block.key} enabled={enabled} />;
+      case "image":
+        return <Image block={block} key={block.key} enabled={enabled} />;
       default:
         return <div></div>;
     }
