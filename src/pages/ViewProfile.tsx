@@ -136,7 +136,7 @@ function ViewProfile() {
         setLoadingState("failed");
       }
     };
-    if (loadingState === "pending") {
+    if (loadingState === "pending" && ceramic.status === "pending") {
       loadCeramic();
     }
     if (loadingState === "pending" && ceramic.status === "done") {
