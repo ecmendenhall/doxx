@@ -13,7 +13,7 @@ const WelcomeButton = () => {
   } else {
     return (
       <button
-        className="text-xl bg-purple-100 hover:bg-purple-300 py-2 px-4 rounded-lg shadow-md"
+        className="bg-purple-100 hover:bg-purple-300 py-2 px-4 rounded-lg shadow-md"
         onClick={onClick}
       >
         Doxx Me!

@@ -5,11 +5,11 @@ const Welcome = () => {
   return (
     <div className="flex flex-col col-span-3 h-screen justify-center content-center py-36">
       <div className="flex flex-row justify-center">
-        <div className="p-16 pb-72">
-          <h1 className="font-script tracking-tighter text-purple-800 text-9xl mb-4">
+        <div className="p-16">
+          <h1 className="font-script tracking-tighter text-purple-800 text-6xl md:text-8xl lg:text-9xl mb-4">
             📑 Doxx
           </h1>
-          <div className="text-xl py-2 mb-4 max-w-prose leading-normal rounded bg-gradient-to-tr from-blue-50 via-purple-50 to-gray-50 shadow-sm">
+          <div className="py-2 mb-4 max-w-prose leading-normal rounded bg-gradient-to-tr from-blue-50 via-purple-50 to-gray-50 shadow-sm">
             <div className="flex flex-row px-4 items-center">
               <div>
                 <EmojiHero
@@ -88,7 +88,22 @@ const Welcome = () => {
               </div>
               <p className="ml-4 p-4">
                 Use Doxx as a blog, profile, journal, homepage, wiki, and more.
-                Edit text, upload files and images, and embed content.
+                Edit text, upload files and images, and embed rich content like
+                videos, bookmarks, and NFTs.
+              </p>
+            </div>
+            <div className="flex flex-row px-4">
+              <div>
+                <EmojiHero
+                  emoji={"👤"}
+                  size="4xl"
+                  hover={false}
+                  onClick={() => {}}
+                />
+              </div>
+              <p className="ml-4 p-4">
+                Create a profile linked to your address or ENS name to share
+                your docs with others.
               </p>
             </div>
             <div className="flex flex-row px-4">
