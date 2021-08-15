@@ -87,8 +87,8 @@ const Welcome = () => {
                 />
               </div>
               <p className="ml-4 p-4">
-                Use Doxx as a blog, profile, journal, homepage, and more. Edit
-                text, upload files and images, and embed content.
+                Use Doxx as a blog, profile, journal, homepage, wiki, and more.
+                Edit text, upload files and images, and embed content.
               </p>
             </div>
             <div className="flex flex-row px-4">
