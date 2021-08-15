@@ -1,6 +1,6 @@
 import useApp from "../hooks/useApp";
 import Text from "./ui/Text";
-import { Block, Text as TextBlock } from "../blocks";
+import { TextBlock } from "../blocks";
 import { useRef } from "react";
 
 import Editor from "@draft-js-plugins/editor";
@@ -20,7 +20,7 @@ import PluginEditor from "@draft-js-plugins/editor";
 import { useCallback } from "react";
 
 interface Props {
-  block: Block;
+  block: TextBlock;
 }
 
 export const createPlugins = () => {
@@ -79,9 +79,8 @@ const EditText = ({ block }: Props) => {
         if (
           newEditorState.getCurrentContent() !== editorState.getCurrentContent()
         ) {
-          const updatedBlock: Block = {
+          const updatedBlock: TextBlock = {
             ...block,
-            type: "text",
             properties: {
               ...block.properties,
               title: [

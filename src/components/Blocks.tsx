@@ -7,6 +7,12 @@ import Image from "../blocks/Image";
 import useActivePage from "../hooks/useActivePage";
 import useApp from "../hooks/useApp";
 import BlockMenu from "./ui/BlockMenu";
+import Callout from "../blocks/Callout";
+import Divider from "../blocks/Divider";
+import File from "../blocks/File";
+import Bookmark from "../blocks/Bookmark";
+import Embed from "../blocks/Embed";
+import NFT from "../blocks/NFT";
 
 interface Props {
   enabled: boolean;
@@ -46,6 +52,18 @@ const Blocks = ({ enabled }: Props) => {
         return <Heading block={block} key={block.key} enabled={enabled} />;
       case "image":
         return <Image block={block} key={block.key} enabled={enabled} />;
+      case "file":
+        return <File block={block} key={block.key} enabled={enabled} />;
+      case "callout":
+        return <Callout block={block} key={block.key} enabled={enabled} />;
+      case "divider":
+        return <Divider block={block} key={block.key} enabled={enabled} />;
+      case "bookmark":
+        return <Bookmark block={block} key={block.key} enabled={enabled} />;
+      case "embed":
+        return <Embed block={block} key={block.key} enabled={enabled} />;
+      case "nft":
+        return <NFT block={block} key={block.key} enabled={enabled} />;
       default:
         return <div></div>;
     }

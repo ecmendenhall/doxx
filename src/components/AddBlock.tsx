@@ -30,25 +30,61 @@ const BlockMenu = ({ active, onClick }: Props) => {
           className="p-2 hover:bg-gray-100"
           onMouseDown={() => onClick("heading-1")}
         >
-          👉 Heading 1
+          🥇 Heading 1
         </li>
         <li
           className="p-2 hover:bg-gray-100"
           onMouseDown={() => onClick("heading-2")}
         >
-          👉 Heading 2
+          🥈 Heading 2
         </li>
         <li
           className="p-2 hover:bg-gray-100"
           onMouseDown={() => onClick("heading-3")}
         >
-          👉 Heading 3
+          🥉 Heading 3
         </li>
         <li
           className="p-2 hover:bg-gray-100"
           onMouseDown={() => onClick("image")}
         >
           🖼 Image
+        </li>
+        <li
+          className="p-2 hover:bg-gray-100"
+          onMouseDown={() => onClick("file")}
+        >
+          📎 File
+        </li>
+        <li
+          className="p-2 hover:bg-gray-100"
+          onMouseDown={() => onClick("callout")}
+        >
+          📣 Callout
+        </li>
+        <li
+          className="p-2 hover:bg-gray-100"
+          onMouseDown={() => onClick("divider")}
+        >
+          📏 Divider
+        </li>
+        <li
+          className="p-2 hover:bg-gray-100"
+          onMouseDown={() => onClick("bookmark")}
+        >
+          📚 Bookmark
+        </li>
+        <li
+          className="p-2 hover:bg-gray-100"
+          onMouseDown={() => onClick("embed")}
+        >
+          🛌 Embed
+        </li>
+        <li
+          className="p-2 hover:bg-gray-100"
+          onMouseDown={() => onClick("nft")}
+        >
+          🎨 NFT
         </li>
       </ul>
     </div>

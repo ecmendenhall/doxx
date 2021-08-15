@@ -25,6 +25,7 @@ const SelectImage = ({ block }: Props) => {
     const newBlock = {
       ...block,
       properties: {
+        ...block.properties,
         source: [[`ipfs://${cid}/${file.name}`]],
       },
     };
