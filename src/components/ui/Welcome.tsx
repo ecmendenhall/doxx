@@ -9,7 +9,7 @@ const Welcome = () => {
           <h1 className="font-script tracking-tighter text-purple-800 text-9xl mb-4">
             📑 Doxx
           </h1>
-          <div className="text-xl py-2 mb-4 max-w-prose leading-normal rounded bg-gray-100 shadow-sm">
+          <div className="text-xl py-2 mb-4 max-w-prose leading-normal rounded bg-gradient-to-tr from-blue-50 via-purple-50 to-gray-50 shadow-sm">
             <div className="flex flex-row px-4 items-center">
               <div>
                 <EmojiHero
