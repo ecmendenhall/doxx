@@ -90,7 +90,7 @@ function EditProfile() {
           level={0}
           edit
         />
-        <CreatePage />
+        <CreatePage icon />
       </Sidebar>
       <Menu>
         <ConnectButton />

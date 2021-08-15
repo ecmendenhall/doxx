@@ -1,4 +1,4 @@
-import Button from "./Button";
+import WelcomeButton from "../WelcomeButton";
 import { EmojiHero } from "./EmojiHero";
 
 const Welcome = () => {
@@ -52,7 +52,7 @@ const Welcome = () => {
                   className="underline text-blue-500 hover:text-blue-700"
                   href="https://ceramic.network/"
                   target="_blank"
-                  rel="norefferrer"
+                  rel="noreferrer"
                 >
                   Ceramic
                 </a>
@@ -105,9 +105,7 @@ const Welcome = () => {
               </p>
             </div>
           </div>
-          <button className="text-xl bg-purple-100 hover:bg-purple-300 py-2 px-4 rounded-lg shadow-md">
-            Doxx Me!
-          </button>
+          <WelcomeButton />
         </div>
       </div>
     </div>

@@ -149,7 +149,7 @@ function ViewProfile() {
     <Grid>
       <Sidebar>
         <PagesList content={pages} level={0} edit={idx.status === "done"} />
-        <CreatePage />
+        <CreatePage icon />
       </Sidebar>
       <div className="lg:hidden fixed top-8 left-12 space-x-2 z-50">
         <div className="bg-white p-2 shadow-md rounded-lg">

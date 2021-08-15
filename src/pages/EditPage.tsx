@@ -57,7 +57,7 @@ function Page() {
           level={0}
           edit
         />
-        <CreatePage />
+        <CreatePage icon />
       </Sidebar>
       <Content>
         {loadingState === "failed" && <NotFound />}

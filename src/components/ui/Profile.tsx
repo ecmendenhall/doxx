@@ -249,12 +249,12 @@ const Profile = ({
             {email && (
               <SocialLink name={"Email"} img={emailIcon} username={email} />
             )}
-            {usernames.keybase && (
+            {keybase && (
               <SocialLink
                 name={"Keybase"}
                 img={keybaseIcon}
-                username={usernames.keybase}
-                url={`https://keybase.io/${usernames.keybase}`}
+                username={keybase}
+                url={`https://keybase.io/${keybase}`}
               />
             )}
           </div>

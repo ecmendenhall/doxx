@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Image as ImageBlock } from "../blocks";
 import useApp from "../hooks/useApp";
 import storage from "../lib/storage";
@@ -15,12 +14,8 @@ const SelectImage = ({ block }: Props) => {
     setBlock,
     saveBlock,
   } = useApp();
-  const [image, setImage] = useState({});
 
   const onImageChange = async (name: string, file: File) => {
-    setImage({
-      [name]: file,
-    });
     const cid = await storage.storeFiles([file]);
     const newBlock = {
       ...block,
@@ -59,8 +54,6 @@ const SelectImage = ({ block }: Props) => {
       saveBlock(ceramic.ceramic, newBlock);
     }
   };
-
-  const empty = !block.properties.source[0][0];
 
   return (
     <div

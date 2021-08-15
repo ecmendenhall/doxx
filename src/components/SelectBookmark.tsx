@@ -1,5 +1,4 @@
 import { Bookmark as BookmarkBlock } from "../blocks";
-import { ReactTinyLink } from "react-tiny-link";
 import { useState } from "react";
 import useApp from "../hooks/useApp";
 import BookmarkEmbed from "./ui/BookmarkEmbed";

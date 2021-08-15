@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import Menu from "../components/ui/Menu";
 import CopyLink from "../components/CopyLink";
 import Welcome from "../components/ui/Welcome";
+import HomeLinks from "../components/HomeLinks";
 
 function Home() {
   const { state, loadCeramic, loadPages, loadBlocks } = useApp();
@@ -45,14 +46,14 @@ function Home() {
           level={0}
           edit
         />
-        <CreatePage />
+        <CreatePage icon />
       </Sidebar>
       <Content>
         <Menu>
           <CopyLink />
           <ConnectWallet />
         </Menu>
-        <Welcome />
+        {state.idx.status === "done" ? <HomeLinks /> : <Welcome />}
         <PageContent />
         <StatusPanel />
       </Content>

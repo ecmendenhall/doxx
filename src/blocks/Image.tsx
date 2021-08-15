@@ -17,6 +17,7 @@ const Image = ({ block, enabled }: Props) => {
           src={storage.gatewayUrl(block.properties.source[0][0])}
           width={block.format.width}
           height={block.format.height}
+          alt={block.properties.title[0][0]}
         />
       )}
     </div>
