@@ -15,7 +15,7 @@ export const ConnectIDX = () => {
 
     return (
       <Button onClick={onClick} primary>
-        Connect IDX
+        Log in with IDX
       </Button>
     );
   } else {

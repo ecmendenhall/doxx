@@ -10,6 +10,7 @@ import useApp from "../hooks/useApp";
 import { useEffect } from "react";
 import Menu from "../components/ui/Menu";
 import CopyLink from "../components/CopyLink";
+import Welcome from "../components/ui/Welcome";
 
 function Home() {
   const { state, loadCeramic, loadPages, loadBlocks } = useApp();
@@ -51,6 +52,7 @@ function Home() {
           <CopyLink />
           <ConnectWallet />
         </Menu>
+        <Welcome />
         <PageContent />
         <StatusPanel />
       </Content>
