@@ -116,7 +116,16 @@ const Welcome = () => {
                 />
               </div>
               <p className="ml-4 p-4">
-                Your Doxx are public, so publish wisely!
+                Your Doxx are public, so publish wisely! Doxx currently uses
+                Ceramic's{" "}
+                <a
+                  href="https://blog.ceramic.network/ceramic-network-clay-testnet/"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Clay testnet
+                </a>
+                , which may periodically wipe data.
               </p>
             </div>
           </div>
